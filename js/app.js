@@ -16,6 +16,34 @@ myApp.controller("MyController", [
     //  Validation rules
     const validationRules = {
       name: { regex: nonEmptyRegex, message: "Name cannot be empty" },
+      first_name: {
+        regex: nonEmptyRegex,
+        message: "First Name cannot be empty",
+      },
+      last_name: { regex: nonEmptyRegex, message: "Last Name cannot be empty" },
+      user_id: { regex: nonEmptyRegex, message: "Select User" },
+      dob: { regex: nonEmptyRegex, message: "Date of Birth cannot be empty" },
+      address1: { regex: nonEmptyRegex, message: "Address cannot be empty" },
+      city: { regex: nonEmptyRegex, message: "City cannot be empty" },
+      state: { regex: nonEmptyRegex, message: "State cannot be empty" },
+      state: { regex: nonEmptyRegex, message: "State cannot be empty" },
+      pincode: { regex: nonEmptyRegex, message: "Pincode cannot be empty" },
+      pan_number: {
+        regex: nonEmptyRegex,
+        message: "Pan Number cannot be empty",
+      },
+      aadhaar_number: {
+        regex: nonEmptyRegex,
+        message: "Nominee cannot be empty",
+      },
+      nominee_relation: {
+        regex: nonEmptyRegex,
+        message: "Nominee Relation cannot be empty",
+      },
+      nominee: {
+        regex: nonEmptyRegex,
+        message: "Aadhaar Number cannot be empty",
+      },
       user_name: { regex: nonEmptyRegex, message: "Name cannot be empty" },
       mobile: { regex: phoneRegex, message: "Mobile Number cannot be empty" },
       email: { regex: emailRegex, message: "Invalid email format" },
@@ -178,7 +206,7 @@ myApp.controller("MyController", [
 
       // Check if confirm password field exists
       if (!conf_password) {
-        console.warn("Confirm password field not found. Skipping validation.");
+        // console.warn("Confirm password field not found. Skipping validation.");
         return true; // If the confirm password field doesn't exist, skip validation
       }
 
@@ -218,22 +246,77 @@ myApp.controller("MyController", [
         return;
       }
 
-      $.ajax({
+      await $.ajax({
         type: "POST",
-        url: "index.php?url=register/store",
+        url: "register/store",
         data: formData,
         processData: false, // Prevent jQuery from processing data
         contentType: false, // Prevent jQuery from setting content-type
         success: function (response) {
-          let response_data = jQuery.parseJSON(response);
-          if (response_data.status) {
-            $("#forget_email_send").text("Password reset link send to mail");
-            setTimeout(() => {
-              $("#forget_email_send").text("");
-              $("#forget_email_id").val("");
-            }, 3000);
-          } else {
-            $("#forget_email_error").text(response_data.message);
+          const { status, message } = response;
+          if (status == "success") {
+            window.location = "/";
+          }
+        },
+        error: function () {
+          alert("error occured");
+        },
+      });
+    };
+
+    /************************ Login form  ************************/
+
+    jb.loginSubmit = async (event, formId) => {
+      event.preventDefault();
+
+      jb.validate_status = form_validation(formId);
+
+      var formData = new FormData($("#" + formId)[0]);
+
+      if (!jb.validate_status) {
+        return;
+      }
+
+      await $.ajax({
+        type: "POST",
+        url: "login/login",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+          const { status, message } = response;
+          if (status == "success") {
+            window.location = "/";
+          }
+        },
+        error: function () {
+          alert("error occured");
+        },
+      });
+    };
+    /************************ Login form  ************************/
+
+    jb.userDetailsUpdate = async (event, formId) => {
+      event.preventDefault();
+
+      jb.validate_status = form_validation(formId);
+
+      var formData = new FormData($("#" + formId)[0]);
+
+      if (!jb.validate_status) {
+        return;
+      }
+
+      await $.ajax({
+        type: "POST",
+        url: "userdetails/update",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+          const { status, message } = response;
+          if (status == "success") {
+            // window.location = "/";
           }
         },
         error: function () {

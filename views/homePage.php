@@ -1,4 +1,7 @@
 <!-- views/home.php -->
+<?php
+
+?>
 <!DOCTYPE html>
 <html>
 
@@ -9,11 +12,10 @@
 
 <body>
     <div>
-        <h1>ddfddfdf</h1>
+        <h1>ddfddfdf <?= $data['userName'] ?></h1>
     </div>
 </body>
 
 <?php include __DIR__ . '../common/footer.php'; ?>
-
 
 </html>

@@ -65,22 +65,41 @@ class Validator
         }
     }
 
-    public function unique($field, $table, $column, PDO $pdo, $message = null)
-    {
-        $value = $this->data[$field] ?? null;
+    // public function unique($field, $table, $column, PDO $pdo, $message = null)
+    // {
+    //     $value = $this->data[$field] ?? null;
 
-        if ($value === null) {
-            return; // skip if the field is not present (handled by required)
+    //     if ($value === null) {
+    //         return; // skip if the field is not present (handled by required)
+    //     }
+
+    //     $sql = "SELECT COUNT(*) FROM $table WHERE $column = :value LIMIT 1";
+    //     $stmt = $pdo->prepare($sql);
+    //     $stmt->bindParam(':value', $value);
+    //     $stmt->execute();
+
+    //     $exists = $stmt->fetchColumn();
+
+    //     if ($exists) {
+    //         $this->errors[$field][] = $message ?? "$field already exists.";
+    //     }
+    // }
+
+    public function unique($field, $table, $column, PDO $pdo, $excludeId = null, $excludeColumn = 'id', $message = null)
+    {
+        $sql = "SELECT COUNT(*) FROM $table WHERE $column = :value";
+        $params = ['value' => $this->data[$field]];
+
+        if ($excludeId !== null) {
+            $sql .= " AND $excludeColumn != :exclude_id";
+            $params['exclude_id'] = $excludeId;
         }
 
-        $sql = "SELECT COUNT(*) FROM $table WHERE $column = :value LIMIT 1";
         $stmt = $pdo->prepare($sql);
-        $stmt->bindParam(':value', $value);
-        $stmt->execute();
+        $stmt->execute($params);
+        $count = $stmt->fetchColumn();
 
-        $exists = $stmt->fetchColumn();
-
-        if ($exists) {
+        if ($count > 0) {
             $this->errors[$field][] = $message ?? "$field already exists.";
         }
     }
