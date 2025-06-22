@@ -2,14 +2,14 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-    <title>About</title>
-    <link rel="stylesheet" href="../css/lib/bootstrap.min.css">
-</head>
+<?php includeWithData(__DIR__ . '../common/head.php', [
+    'title' => 'About',
+]);
+?>
 
 <body>
     <div>
-        <h1><?= $info ?> about</h1>
+        <h1>about</h1>
     </div>
 </body>
 

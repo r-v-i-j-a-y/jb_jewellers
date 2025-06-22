@@ -1,4 +1,9 @@
 <?php
+function includeWithData($filePath, $data = [])
+{
+    extract($data);
+    include $filePath;
+}
 $url = isset($_GET['url']) ? explode('/', filter_var(rtrim($_GET['url'], '/'), FILTER_SANITIZE_URL)) : ['home', 'index'];
 
 $controllerName = ucfirst($url[0]) . 'Controller';

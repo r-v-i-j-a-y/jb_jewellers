@@ -13,7 +13,7 @@ class HomeController extends SessionData
             'userName' => 'Vijay',
             'email' => 'vijay@example.com'
         ]);
-        require_once "views/homePage.php";
+        // require_once "views/homePage.php";
     }
 
 }

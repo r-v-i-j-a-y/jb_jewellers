@@ -5,15 +5,25 @@ require './models/userDetailsModal.php';
 require './services/validator.php';
 require './services/response.php';
 require_once './services/authentication.php';
+require_once './models/userModal.php';
 class UserdetailsController extends SessionData
 {
     public function index()
     {
+        $pdo = DB::connection();
         if (AuthMiddleware::handle()) {
             require "views/homePage.php";
             exit;
         }
-        require "views/userdetailsPage.php";
+
+        $allUserDetails = new UserModel($pdo);
+
+        $data = $allUserDetails->where('role_id', '!=', 1)->get(['user_name', 'id', 'mobile', 'role_id']);
+
+        // $data = json_encode($data, true);
+
+        $this->view('userdetailsPage', ['userDetails' => $data]);
+
     }
 
     public function update()
@@ -24,8 +34,8 @@ class UserdetailsController extends SessionData
         $userDetailsModel = new UserDetailsModel($pdo);
 
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
             $data = $_POST;
+            $userId = $this->auth_user_role_id == 1 ? $data['user_id'] : $this->auth_user_id;
             $data['anniversary'] = !empty($data['anniversary']) ? $data['anniversary'] : null;
             $data['address2'] = !empty($data['address2']) ? $data['address2'] : null;
             $validator = new Validator($_POST);
@@ -38,12 +48,13 @@ class UserdetailsController extends SessionData
             $validator->required('city');
             $validator->required('state');
             $validator->required('pincode');
+
             $validator->required('pan_number');
-            $validator->unique('pan_number', 'user_details', 'pan_number', $pdo, $this->auth_user_id, 'user_id');
+            $validator->unique('pan_number', 'user_details', 'pan_number', $pdo, $userId, 'user_id');
 
             $validator->required('aadhaar_number');
             $validator->numeric('aadhaar_number');
-            $validator->unique('aadhaar_number', 'user_details', 'aadhaar_number', $pdo ,$this->auth_user_id, 'user_id');
+            $validator->unique('aadhaar_number', 'user_details', 'aadhaar_number', $pdo, $userId, 'user_id');
 
             $validator->required('nominee');
             $validator->required('nominee_relation');

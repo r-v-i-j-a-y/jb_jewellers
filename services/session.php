@@ -85,7 +85,7 @@ class SessionData
 
     protected function redirect($url)
     {
-        header("Location: index.php?url=$url");
+        header("Location: $url");
         exit;
     }
 }

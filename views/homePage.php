@@ -5,15 +5,31 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-    <title>Home</title>
-    <link rel="stylesheet" href="../css/lib/bootstrap.min.css">
-</head>
+<?php includeWithData(__DIR__ . '../common/head.php', [
+    'title' => 'Home',
+]);
 
-<body>
-    <div>
-        <h1>ddfddfdf <?= $data['userName'] ?></h1>
+?>
+
+<body ng-app="myApp" ng-controller="MyController as jb" class="bg-light">
+    <div ng-init="jb.commonInit(<?= htmlspecialchars(json_encode($this->auth), ENT_QUOTES, 'UTF-8') ?>)">
+        <!-- Sidebar -->
+        <?php include __DIR__ . '../common/sideBar.php'; ?>
+
+        <!-- Main Content Area -->
+        <div class="main-container">
+            <!-- Fixed Topbar -->
+            <?php include __DIR__ . '../common/topBar.php'; ?>
+
+            <!-- Scrollable Content -->
+            <div class="content-scrollable">
+                <div class="row g-4">
+                    <!-- Cards and Charts go here -->
+                </div>
+            </div>
+        </div>
     </div>
+
 </body>
 
 <?php include __DIR__ . '../common/footer.php'; ?>

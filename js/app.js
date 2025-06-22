@@ -2,7 +2,7 @@ var myApp = angular.module("myApp", []);
 
 myApp.controller("MyController", [
   "$scope",
-  function (jb, $timeout) {
+  function ($scope, jb, $timeout) {
     var jb = this;
     jb.name = "vijay";
     jb.formData = {};
@@ -12,6 +12,10 @@ myApp.controller("MyController", [
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     // const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
     const passwordRegex = /^\+?[1-9][0-9]{7,15}$/;
+    var $rootScope = angular
+      .element(document.body)
+      .injector()
+      .get("$rootScope");
 
     //  Validation rules
     const validationRules = {
@@ -324,5 +328,82 @@ myApp.controller("MyController", [
         },
       });
     };
+
+    /************************* Common Init Function ********************/
+    jb.commonInit = (authData) => {
+      jb.navList = [
+        {
+          title: "members details",
+          list: [
+            {
+              link: "/",
+              linkName: "purchase scheme",
+            },
+            {
+              link: "/payscheme",
+              linkName: "pay scheme",
+            },
+            {
+              link: "/viewusers",
+              linkName: "view users",
+            },
+            {
+              link: "/chitdetails",
+              linkName: "chit details",
+            },
+          ],
+        },
+        {
+          title: "transaction details",
+          list: [
+            {
+              link: "/monthwisepayment",
+              linkName: "month wise payment",
+            },
+            {
+              link: "/chitwisepayment",
+              linkName: "chit wise payment",
+            },
+            {
+              link: "/pendingpayment",
+              linkName: "pending payment",
+            },
+            {
+              link: "/changestatus",
+              linkName: "change status",
+            },
+            {
+              link: "/closescheme",
+              linkName: "close scheme",
+            },
+          ],
+        },
+      ];
+      jb.currentPath = window.location.pathname;
+      jb.authData = authData;
+
+      if (!$rootScope.$$phase) {
+        $rootScope.$apply(); // only if no digest is running
+      }
+    };
+
+    /************************* User Details Init Function ********************/
+    jb.userDetailsInit = async (usersList) => {
+      jb.allUserList = await usersList;
+
+      $(document).ready(() => {
+        if (jb.authData["role_id"] == 2) {
+          $("#selectUserId").val(jb.authData["id"]);
+          $("#selectUserId").css("pointer-events", "none");
+        }
+      });
+
+      if (!$rootScope.$$phase) {
+        $rootScope.$apply(); // only if no digest is running
+      }
+    };
   },
 ]);
+
+// ng-options="user.id as (user.mobile + ' - ' + user.user_name) for user in jb.allUserList" <?php if ($this->auth_user_role_id == 1) {
+//                         $this->auth_user_id ?>disabled <?php } ?>
