@@ -20,6 +20,14 @@ $router->get('/view-users', 'UserDetailsController@allUser');
 $router->get('/logout', 'LogoutController@index');
 
 $router->get('/schemes', 'SchemeController@index');
+$router->get('/scheme-create', 'SchemeController@create');
+$router->post('/scheme-create', 'SchemeController@store');
+$router->post('/scheme-status-update', 'SchemeController@status');
+
+$router->get('/chit-list', 'ChitController@index');
+$router->post('/chit-status-update', 'ChitController@status');
+$router->get('/chit-create', 'ChitController@create');
+$router->post('/chit-create', 'ChitController@store');
 
 // $router->get('/about', 'HomeController@about');
 // $router->get('/user/{id}', 'HomeController@show');

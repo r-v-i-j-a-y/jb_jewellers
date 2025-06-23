@@ -8,17 +8,19 @@ require './services/response.php';
 require_once './services/authentication.php';
 require_once './models/userModal.php';
 require_once './models/schemeModel.php';
-class SchemeController extends SessionData
+require_once './models/chitModel.php';
+class ChitController extends SessionData
 {
     public function index()
     {
         if (AuthMiddleware::handle()) {
             exit;
         }
+        $data = $_GET;
         $pdo = DB::connection();
-        $schemes = new SchemeModel($pdo)->select(['schemes.id', 'schemes.scheme_name', 'schemes.scheme_tenure', 'schemes.scheme_status', 'schemes.scheme_created_by', 'schemes.created_at', 'schemes.updated_at', 'users.user_name'])->leftJoin('users', 'users.id', '=', 'schemes.scheme_created_by')->get();
+        $chitData = new ChitModel($pdo)->select(['id', 'chit_amount', 'scheme_id', 'chit_created_by', 'created_at', 'updated_at', 'status'])->where("scheme_id", '=', $data['scheme_id'])->get();
         // print_r($schemes);
-        $this->view('schemesPage', ['schemeData' => $schemes]);
+        $this->view('chitsPage', ['chitData' => $chitData]);
     }
 
     public function create()
@@ -26,32 +28,32 @@ class SchemeController extends SessionData
         if (AuthMiddleware::handle()) {
             exit;
         }
-        $this->view('schemeCreatePage');
+        $this->view('chitCreatePage');
     }
 
     public function store()
     {
         $data = $_POST;
         $validator = new Validator($_POST);
-        $validator->required('scheme_name');
-        $validator->required('scheme_tenure');
+        $validator->required('chit_amount');
+        $validator->required('scheme_id');
         $pdo = DB::connection();
-        $schemes = new SchemeModel($pdo);
+        $schemes = new ChitModel($pdo);
 
         if (!$validator->passes()) {
             Response::error('Validation failed', $validator->errors(), 200);
         }
 
-        $isExist = $schemes->find(['scheme_name' => $data['scheme_name'], 'scheme_tenure' => $data['scheme_tenure']]);
+        $isExist = $schemes->find(['scheme_id' => $data['scheme_id'], 'chit_amount' => $data['chit_amount']]);
 
         // print_r($isExist);
         if ($isExist) {
-            Response::error('Scheme Already Exists', $validator->errors(), 200);
+            Response::error('Chit Already Exists', $validator->errors(), 200);
         }
         try {
-            $schemes->insert(['scheme_name' => $data['scheme_name'], 'scheme_tenure' => $data['scheme_tenure'], 'scheme_created_by' => $this->auth_user_id]);
+            $schemes->insert(['scheme_id' => $data['scheme_id'], 'chit_amount' => $data['chit_amount'], 'chit_created_by' => $this->auth_user_id]);
 
-            Response::success('Scheme Created successfully');
+            Response::success('Chit Created successfully');
 
         } catch (PDOException $e) {
 
@@ -67,24 +69,23 @@ class SchemeController extends SessionData
         $validator = new Validator($_POST);
         $validator->required('id');
 
-
         if (!$validator->passes()) {
             Response::error('Validation failed', $validator->errors(), 200);
         }
 
         $pdo = DB::connection();
-        $schemes = new SchemeModel($pdo);
+        $schemes = new ChitModel($pdo);
 
         $isExist = $schemes->find(['id' => $data['id']], ['first' => true]);
 
         if (isset($isExist)) {
             try {
-                $newStatus = $isExist['scheme_status'] === 'active' ? 'inactive' : 'active';
+                $newStatus = $isExist['status'] === 'active' ? 'inactive' : 'active';
 
 
-                $schemes->update(['scheme_status' => $newStatus], ['id' => $data['id']]);
+                $schemes->update(['status' => $newStatus], ['id' => $data['id']]);
 
-                Response::success('Scheme ' . $newStatus . ' successfully');
+                Response::success('Chit ' . $newStatus . ' successfully');
 
             } catch (PDOException $e) {
 

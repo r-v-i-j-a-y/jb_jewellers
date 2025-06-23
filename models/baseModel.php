@@ -55,14 +55,33 @@ class BaseModel
         return $this->get();
     }
 
-    public function find(array $conditions)
+    public function find(array $conditions, array $options = [])
     {
+        // Apply WHERE
         foreach ($conditions as $key => $value) {
             $this->where($key, '=', $value);
         }
-        return $this->first();
-    }
 
+        // Optional: select fields
+        if (!empty($options['select'])) {
+            $this->select($options['select']);
+        }
+
+        // Optional: order by
+        if (!empty($options['orderBy']) && is_array($options['orderBy'])) {
+            foreach ($options['orderBy'] as $column => $direction) {
+                $this->orderBy($column, $direction);
+            }
+        }
+
+        // Optional: limit
+        if (!empty($options['limit'])) {
+            $this->limit($options['limit']);
+        }
+
+        // Return result
+        return !empty($options['first']) ? $this->first() : $this->get();
+    }
     public function insert(array $data)
     {
         if (!isset($data['created_at'])) {
@@ -79,6 +98,23 @@ class BaseModel
         return $this->find(['id' => $id]);
     }
 
+    public function isExist(array $conditions)
+    {
+        $where = [];
+        $bindings = [];
+
+        foreach ($conditions as $key => $value) {
+            $param = "param_" . count($bindings);
+            $where[] = "$key = :$param";
+            $bindings[$param] = $value;
+        }
+
+        $sql = "SELECT 1 FROM {$this->table} WHERE " . implode(' AND ', $where) . " LIMIT 1";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($bindings);
+
+        return $stmt->fetchColumn() !== false;
+    }
     public function update(array $data, array $conditions)
     {
         $data['updated_at'] = date('Y-m-d H:i:s');

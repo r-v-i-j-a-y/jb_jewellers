@@ -9,8 +9,7 @@ body {
 }
 /* Login */
 .left-panel {
-  background: url("/public/images/login-side-image.jpg") no-repeat center
-    center;
+  background: url("/public/images/login-side-image.jpg") no-repeat center center;
   background-size: cover;
   color: white;
   border-top-left-radius: 1rem;
@@ -133,4 +132,18 @@ body {
     flex: 0 0 100%;
     max-width: 100%;
   }
+}
+
+.form-check-input {
+  width: 40px !important;
+  height: 1.5rem;
+  border-radius: 2rem;
+  background-color: #e9ecef;
+  position: relative;
+  
+}
+
+.form-check-input:checked {
+  background-color: #3b82f6; /* Blue */
+  border-color: #3b82f6;
 }

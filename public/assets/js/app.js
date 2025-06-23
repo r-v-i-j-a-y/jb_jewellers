@@ -86,11 +86,20 @@ myApp.controller("MyController", [
     //  Validation rules
     const validationRules = {
       name: { regex: nonEmptyRegex, message: "Name cannot be empty" },
+      chit_amount: { regex: nonEmptyRegex, message: "Chit amount cannot be empty" },
       first_name: {
         regex: nonEmptyRegex,
         message: "First Name cannot be empty",
       },
       last_name: { regex: nonEmptyRegex, message: "Last Name cannot be empty" },
+      scheme_name: {
+        regex: nonEmptyRegex,
+        message: "Scheme Name cannot be empty",
+      },
+      scheme_tenure: {
+        regex: nonEmptyRegex,
+        message: "Scheme Tenure cannot be empty",
+      },
       user_id: { regex: nonEmptyRegex, message: "Select User" },
       dob: { regex: nonEmptyRegex, message: "Date of Birth cannot be empty" },
       address1: { regex: nonEmptyRegex, message: "Address cannot be empty" },
@@ -301,6 +310,41 @@ myApp.controller("MyController", [
       return true;
     }
 
+    /************************* Clear Form  *****************************************/
+
+    jb.clearForm = function (formId) {
+      // Clear model data
+      jb.formData = {};
+
+      // Reset all input, textarea, and select elements
+      $(
+        "#" +
+          formId +
+          " input, #" +
+          formId +
+          " textarea, #" +
+          formId +
+          " select"
+      ).each(function () {
+        const type = $(this).attr("type");
+
+        if (type === "checkbox" || type === "radio") {
+          $(this).prop("checked", false);
+        } else {
+          $(this).val("");
+        }
+
+        // Remove validation classes and error messages
+        $(this).removeClass("valid invalid border-danger");
+        $(this).next(".error-message").text("");
+      });
+
+      // Also uncheck agreement if it exists
+      if ($("#agree").length) {
+        $("#agree").prop("checked", false);
+      }
+    };
+
     /************************ Registration form  ************************/
 
     jb.registerSubmit = async (event, formId) => {
@@ -363,7 +407,7 @@ myApp.controller("MyController", [
         },
       });
     };
-    /************************ Login form  ************************/
+    /************************ User Details Update  ************************/
 
     jb.userDetailsUpdate = async (event, formId) => {
       event.preventDefault();
@@ -473,35 +517,168 @@ myApp.controller("MyController", [
         $rootScope.$apply(); // only if no digest is running
       }
     };
-    /************************* User Details Init Function ********************/
+    /************************* Users Init Function ********************/
     jb.usersInit = async (usersDetails) => {
       jb.allUserList = await usersDetails;
       if (!$rootScope.$$phase) {
         $rootScope.$apply(); // only if no digest is running
       }
     };
-    /************************* User Details Init Function ********************/
+    /************************* Schemes Function ********************/
+    jb.schemesInit = async (schemesData) => {
+      jb.schemesData = await schemesData;
+      if (!$rootScope.$$phase) {
+        $rootScope.$apply(); // only if no digest is running
+      }
+    };
+    /************************ Scheme Create  ************************/
+
+    jb.schemeCreate = async (event, formId) => {
+      event.preventDefault();
+
+      jb.validate_status = form_validation(formId);
+
+      var formData = new FormData($("#" + formId)[0]);
+      if (!jb.validate_status) {
+        return;
+      }
+
+      await $.ajax({
+        type: "POST",
+        url: "scheme-create",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+          const { status, message, errors } = response;
+          if (status == "success") {
+            ToastService.success("Success", message);
+            jb.clearForm(formId);
+          } else {
+            // let firstKey = Object.keys(errors)[0];
+            // let firstErrorMessage = errors[firstKey][0];
+            ToastService.error("Error", message);
+          }
+        },
+      });
+    };
+
+    jb.schemeStatusChangeModal = function (scheme) {
+      jb.schemeData = scheme;
+    };
+    jb.schemeStatusChangeModalClose = () => {
+      let id = `#schemeStatusSwitch${jb.schemeData.id}`;
+      if ($(id).is(":checked")) {
+        $(id).prop("checked", false);
+      } else {
+        $(id).prop("checked", true);
+      }
+    };
+
+    jb.confirmStatusChange = async function () {
+      await $.ajax({
+        type: "POST",
+        url: "scheme-status-update",
+        data: { id: jb.schemeData.id },
+        success: function (response) {
+          const { status, message, errors } = response;
+          if (status == "success") {
+            ToastService.success("Success", message);
+
+            jb.schemeData.scheme_status =
+              jb.schemeData.scheme_status == "active" ? "inactive" : "active";
+            const modal = bootstrap.Modal.getOrCreateInstance(
+              $("#schemeStatusModal")[0]
+            );
+            modal.hide();
+          } else {
+            ToastService.error("Error", message);
+          }
+        },
+      });
+      if (!$rootScope.$$phase) {
+        $rootScope.$apply(); // only if no digest is running
+      }
+    };
+
+    /************************* Chit Init Function ********************/
+    jb.chitsInit = async (chitData) => {
+      jb.chitData = await chitData;
+      if (!$rootScope.$$phase) {
+        $rootScope.$apply(); // only if no digest is running
+      }
+    };
+
+    jb.chitCreate = async (event, formId) => {
+      event.preventDefault();
+
+      jb.validate_status = form_validation(formId);
+
+      var formData = new FormData($("#" + formId)[0]);
+      if (!jb.validate_status) {
+        return;
+      }
+
+      await $.ajax({
+        type: "POST",
+        url: "chit-create",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+          const { status, message, errors } = response;
+          if (status == "success") {
+            ToastService.success("Success", message);
+            jb.clearForm(formId);
+          } else {
+            // let firstKey = Object.keys(errors)[0];
+            // let firstErrorMessage = errors[firstKey][0];
+            ToastService.error("Error", message);
+          }
+        },
+      });
+    };
+    jb.chitStatusChangeModal = function (chit) {
+      jb.chitSelected = chit;
+    };
+    jb.chitStatusChangeModalClose = () => {
+      let id = `#chitStatusSwitch${jb.chitSelected.id}`;
+      if ($(id).is(":checked")) {
+        $(id).prop("checked", false);
+      } else {
+        $(id).prop("checked", true);
+      }
+    };
+
+    jb.confirmChitStatusChange = async function () {
+      await $.ajax({
+        type: "POST",
+        url: "chit-status-update",
+        data: { id: jb.chitSelected.id },
+        success: function (response) {
+          const { status, message, errors } = response;
+          if (status == "success") {
+            ToastService.success("Success", message);
+
+            jb.chitSelected.status =
+              jb.chitSelected.status == "active" ? "inactive" : "active";
+            const modal = bootstrap.Modal.getOrCreateInstance(
+              $("#chitStatusModal")[0]
+            );
+            modal.hide();
+          } else {
+            ToastService.error("Error", message);
+          }
+        },
+      });
+      if (!$rootScope.$$phase) {
+        $rootScope.$apply(); // only if no digest is running
+      }
+    };
   },
 ]);
 
 // Directive to run new DataTable after ng-repeat
-// myApp.directive("datatable", function () {
-//   return {
-//     restrict: "A",
-//     link: function (scope, element) {
-//       if (scope.$last === true) {
-//         setTimeout(function () {
-//           // Destroy existing instance (optional safety)
-//           if (DataTable.tables("#userTable").length) {
-//             DataTable.tables("#userTable").forEach((t) => t.destroy());
-//           }
-
-//           new DataTable("#userTable");
-//         }, 0);
-//       }
-//     },
-//   };
-// });
 
 myApp.directive("datatable", function () {
   return {
