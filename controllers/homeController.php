@@ -9,11 +9,7 @@ class HomeController extends SessionData
             require_once "views/homePage.php";
             exit;
         }
-        $this->view('homePage', [
-            'userName' => 'Vijay',
-            'email' => 'vijay@example.com'
-        ]);
-        // require_once "views/homePage.php";
+        $this->view('homePage');
     }
 
 }

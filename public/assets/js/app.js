@@ -1,12 +1,78 @@
 var myApp = angular.module("myApp", []);
 
+// // Custom directive to trigger DataTable after ng-repeat
+// myApp.directive("datatable", function () {
+//   return {
+//     restrict: "A",
+//     link: function (scope, element) {
+//       scope.$watch(
+//         function () {
+//           return scope.$last;
+//         },
+//         function (isLast) {
+//           if (isLast) {
+//             setTimeout(function () {
+//               $(element.closest("table")).DataTable();
+//             }, 0);
+//           }
+//         }
+//       );
+//     },
+//   };
+// });
+// For ajax
+
+// $http.get('/api/users').then(function (response) {
+//   $scope.users = response.data;
+//   $timeout(function () {
+//     $('#userTable').DataTable();
+//   }, 0);
+// });
+
+// ToastService wrapping iziToast
+myApp.factory("ToastService", function () {
+  return {
+    success: function (title, message) {
+      iziToast.success({
+        title: title || "Success",
+        message: message || "Operation successful",
+        position: "topRight",
+      });
+    },
+    error: function (title, message) {
+      iziToast.error({
+        title: title || "Error",
+        message: message || "Something went wrong",
+        position: "topRight",
+      });
+    },
+    warning: function (title, message) {
+      iziToast.warning({
+        title: title || "Warning",
+        message: message || "Be careful",
+        position: "topRight",
+      });
+    },
+    info: function (title, message) {
+      iziToast.info({
+        title: title || "Info",
+        message: message || "FYI",
+        position: "topRight",
+      });
+    },
+  };
+});
+
 myApp.controller("MyController", [
   "$scope",
-  function ($scope, jb, $timeout) {
+  "$timeout",
+  "ToastService",
+  function ($scope, $timeout, ToastService) {
     var jb = this;
-    jb.name = "vijay";
+
     jb.formData = {};
 
+    // Example usage inside any function:
     const nonEmptyRegex = /^(?!\s*$).+$/;
     const phoneRegex = /^\+?[1-9][0-9]{7,14}$/;
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
@@ -252,7 +318,7 @@ myApp.controller("MyController", [
 
       await $.ajax({
         type: "POST",
-        url: "register/store",
+        url: "register",
         data: formData,
         processData: false, // Prevent jQuery from processing data
         contentType: false, // Prevent jQuery from setting content-type
@@ -283,7 +349,7 @@ myApp.controller("MyController", [
 
       await $.ajax({
         type: "POST",
-        url: "login/login",
+        url: "login",
         data: formData,
         processData: false,
         contentType: false,
@@ -291,10 +357,9 @@ myApp.controller("MyController", [
           const { status, message } = response;
           if (status == "success") {
             window.location = "/";
+          } else {
+            ToastService.error("Error", response.errors);
           }
-        },
-        error: function () {
-          alert("error occured");
         },
       });
     };
@@ -313,18 +378,19 @@ myApp.controller("MyController", [
 
       await $.ajax({
         type: "POST",
-        url: "userdetails/update",
+        url: "user-details",
         data: formData,
         processData: false,
         contentType: false,
         success: function (response) {
-          const { status, message } = response;
+          const { status, message, errors } = response;
           if (status == "success") {
-            // window.location = "/";
+            ToastService.success("Success", message);
+          } else {
+            let firstKey = Object.keys(errors)[0];
+            let firstErrorMessage = errors[firstKey][0];
+            ToastService.error("Error", firstErrorMessage);
           }
-        },
-        error: function () {
-          alert("error occured");
         },
       });
     };
@@ -337,18 +403,22 @@ myApp.controller("MyController", [
           list: [
             {
               link: "/",
+              linkName: "Dashboard",
+            },
+            {
+              link: "/purchase-scheme",
               linkName: "purchase scheme",
             },
             {
-              link: "/payscheme",
+              link: "/pays-cheme",
               linkName: "pay scheme",
             },
             {
-              link: "/viewusers",
+              link: "/view-users",
               linkName: "view users",
             },
             {
-              link: "/chitdetails",
+              link: "/chit-details",
               linkName: "chit details",
             },
           ],
@@ -357,23 +427,23 @@ myApp.controller("MyController", [
           title: "transaction details",
           list: [
             {
-              link: "/monthwisepayment",
+              link: "/month-wise-payment",
               linkName: "month wise payment",
             },
             {
-              link: "/chitwisepayment",
+              link: "/chit-wise-payment",
               linkName: "chit wise payment",
             },
             {
-              link: "/pendingpayment",
+              link: "/pending-payment",
               linkName: "pending payment",
             },
             {
-              link: "/changestatus",
+              link: "/change-status",
               linkName: "change status",
             },
             {
-              link: "/closescheme",
+              link: "/close-scheme",
               linkName: "close scheme",
             },
           ],
@@ -388,22 +458,86 @@ myApp.controller("MyController", [
     };
 
     /************************* User Details Init Function ********************/
-    jb.userDetailsInit = async (usersList) => {
-      jb.allUserList = await usersList;
-
-      $(document).ready(() => {
-        if (jb.authData["role_id"] == 2) {
-          $("#selectUserId").val(jb.authData["id"]);
-          $("#selectUserId").css("pointer-events", "none");
-        }
-      });
+    jb.userDetailsInit = async (user) => {
+      jb.selectUserDetilas = await user;
+      jb.selectUserDetilas.dob = new Date(jb.selectUserDetilas.dob);
+      jb.selectUserDetilas.anniversary = new Date(
+        jb.selectUserDetilas.anniversary
+      );
 
       if (!$rootScope.$$phase) {
         $rootScope.$apply(); // only if no digest is running
       }
     };
+    /************************* User Details Init Function ********************/
+    jb.usersInit = async (usersDetails) => {
+      jb.allUserList = await usersDetails;
+      if (!$rootScope.$$phase) {
+        $rootScope.$apply(); // only if no digest is running
+      }
+    };
+    /************************* User Details Init Function ********************/
   },
 ]);
+
+// Directive to run new DataTable after ng-repeat
+// myApp.directive("datatable", function () {
+//   return {
+//     restrict: "A",
+//     link: function (scope, element) {
+//       if (scope.$last === true) {
+//         setTimeout(function () {
+//           // Destroy existing instance (optional safety)
+//           if (DataTable.tables("#userTable").length) {
+//             DataTable.tables("#userTable").forEach((t) => t.destroy());
+//           }
+
+//           new DataTable("#userTable");
+//         }, 0);
+//       }
+//     },
+//   };
+// });
+
+myApp.directive("datatable", function () {
+  return {
+    restrict: "A",
+    link: function (scope, element, attrs) {
+      scope.$watch(
+        function () {
+          return scope.jb?.allUserList?.length;
+        },
+        function (newVal) {
+          if (newVal > 0) {
+            setTimeout(function () {
+              new DataTable("#userTable", {
+                dom:
+                  "<'row mb-2'<'col-sm-4'l><'col-sm-4 text-center'B><'col-sm-4'f>>" + // top: length, buttons, search
+                  "<'row'<'col-sm-12'tr>>" + // table
+                  "<'row mt-2'<'col-sm-5'i><'col-sm-7'p>>", // bottom: info + pagination
+                buttons: [
+                  {
+                    extend: "excel",
+                    text: "Export Excel",
+                  },
+                  {
+                    extend: "pdf",
+                    text: "Export PDF",
+                  },
+                ],
+                pageLength: 10,
+                lengthMenu: [
+                  [10, 25, 50, 100],
+                  ["10", "25", "50", "100"],
+                ],
+              });
+            }, 0);
+          }
+        }
+      );
+    },
+  };
+});
 
 // ng-options="user.id as (user.mobile + ' - ' + user.user_name) for user in jb.allUserList" <?php if ($this->auth_user_role_id == 1) {
 //                         $this->auth_user_id ?>disabled <?php } ?>

@@ -10,6 +10,11 @@ class BaseModel
     protected $limit = '';
     protected $softDeleteEnabled = false;
 
+    protected $fields = ['*'];
+    protected $params = [];
+
+    protected $joins = [];
+
     public function __construct(PDO $pdo)
     {
         $this->pdo = $pdo;
@@ -21,23 +26,41 @@ class BaseModel
         }
     }
 
+    public function join($table, $first, $operator, $second)
+    {
+        $this->joins[] = "INNER JOIN $table ON $first $operator $second";
+        return $this;
+    }
+
+    public function leftJoin($table, $first, $operator, $second)
+    {
+        $this->joins[] = "LEFT JOIN $table ON $first $operator $second";
+        return $this;
+    }
+
     public function enableSoftDeletes()
     {
         $this->softDeleteEnabled = true;
         return $this;
     }
 
-    public function all($fields = ['*'])
+    public function select(array $fields)
     {
-        return $this->get($fields);
+        $this->fields = $fields;
+        return $this;
     }
 
-    public function find(array $conditions, $fields = ['*'])
+    public function all()
+    {
+        return $this->get();
+    }
+
+    public function find(array $conditions)
     {
         foreach ($conditions as $key => $value) {
             $this->where($key, '=', $value);
         }
-        return $this->first($fields);
+        return $this->first();
     }
 
     public function insert(array $data)
@@ -58,17 +81,6 @@ class BaseModel
 
     public function update(array $data, array $conditions)
     {
-        // $data['updated_at'] = date('Y-m-d H:i:s');
-        // $set = implode(', ', array_map(fn($k) => "$k = :$k", array_keys($data)));
-        // $where = implode(' AND ', array_map(fn($k) => "$k = :where_$k", array_keys($conditions)));
-
-        // $params = $data;
-        // foreach ($conditions as $k => $v) {
-        //     $params["where_$k"] = $v;
-        // }
-
-        // $stmt = $this->pdo->prepare("UPDATE {$this->table} SET $set WHERE $where");
-        // return $stmt->execute($params);
         $data['updated_at'] = date('Y-m-d H:i:s');
 
         $set = implode(', ', array_map(fn($k) => "$k = :$k", array_keys($data)));
@@ -82,12 +94,7 @@ class BaseModel
         $stmt = $this->pdo->prepare("UPDATE {$this->table} SET $set WHERE $where");
         $success = $stmt->execute($params);
 
-        if ($success) {
-            // ✅ Return the updated data using find()
-            return $this->find($conditions);
-        }
-
-        return false;
+        return $success ? $this->find($conditions) : false;
     }
 
     public function delete(array $conditions)
@@ -101,6 +108,18 @@ class BaseModel
         return $stmt->execute($conditions);
     }
 
+    // public function where($field, $operator, $value = null)
+    // {
+    //     if ($value === null) {
+    //         $value = $operator;
+    //         $operator = '=';
+    //     }
+
+    //     $param = "param_" . count($this->bindings);
+    //     $this->where[] = "$field $operator :$param";
+    //     $this->bindings[$param] = $value;
+    //     return $this;
+    // }
     public function where($field, $operator, $value = null)
     {
         if ($value === null) {
@@ -111,6 +130,7 @@ class BaseModel
         $param = "param_" . count($this->bindings);
         $this->where[] = "$field $operator :$param";
         $this->bindings[$param] = $value;
+
         return $this;
     }
 
@@ -120,7 +140,7 @@ class BaseModel
             return $this;
 
         $placeholders = [];
-        foreach ($values as $i => $val) {
+        foreach ($values as $val) {
             $key = "param_" . count($this->bindings);
             $placeholders[] = ":$key";
             $this->bindings[$key] = $val;
@@ -153,34 +173,133 @@ class BaseModel
     public function paginate($perPage = 10, $page = 1)
     {
         $offset = ($page - 1) * $perPage;
-        $this->limit = " LIMIT $offset, $perPage";
-        return $this->get();
+
+        $columns = implode(', ', $this->fields);
+
+        // Prepare WHERE clause
+        $whereSql = '';
+        if (!empty($this->where)) {
+            $whereSql = 'WHERE ' . implode(' AND ', $this->where);
+        }
+
+        // Soft delete condition
+        if ($this->softDeleteEnabled) {
+            $deletedCondition = "`deleted_at` IS NULL";
+            $whereSql = $whereSql ? "$whereSql AND $deletedCondition" : "WHERE $deletedCondition";
+        }
+
+        // Total count
+        $countSql = "SELECT COUNT(*) as total FROM {$this->table} $whereSql";
+        $countStmt = $this->pdo->prepare($countSql);
+        $countStmt->execute($this->bindings);
+        $total = $countStmt->fetch(PDO::FETCH_ASSOC)['total'];
+
+        // Final data query
+        $sql = "SELECT $columns FROM {$this->table} $whereSql {$this->order} LIMIT $offset, $perPage";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($this->bindings);
+        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $this->fields = ['*'];
+        $this->resetQuery();
+
+        return [
+            'data' => $data,
+            'total' => $total,
+            'perPage' => $perPage,
+            'currentPage' => $page,
+            'lastPage' => ceil($total / $perPage),
+        ];
     }
 
-    public function get($fields = ['*'])
+    // public function get()
+    // {
+    //     $columns = implode(', ', $this->fields);
+    //     $whereClause = '';
+
+    //     if (!empty($this->where)) {
+    //         $whereClause = ' WHERE ' . implode(' AND ', $this->where);
+    //     }
+
+    //     if ($this->softDeleteEnabled) {
+    //         $whereClause .= (empty($whereClause) ? ' WHERE ' : ' AND ') . "deleted_at IS NULL";
+    //     }
+
+    //     $sql = "SELECT $columns FROM {$this->table} $whereClause{$this->order}{$this->limit}";
+    //     $stmt = $this->pdo->prepare($sql);
+    //     $stmt->execute($this->bindings);
+
+    //     $this->fields = ['*'];
+    //     $this->resetQuery();
+    //     return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // }
+    public function get()
     {
-        $columns = implode(', ', $fields);
+        $columns = implode(', ', $this->fields);
         $whereClause = '';
+        $joinClause = '';
+
+        if (!empty($this->joins)) {
+            $joinClause = ' ' . implode(' ', $this->joins);
+        }
 
         if (!empty($this->where)) {
             $whereClause = ' WHERE ' . implode(' AND ', $this->where);
         }
 
         if ($this->softDeleteEnabled) {
-            $whereClause .= (empty($whereClause) ? ' WHERE ' : ' AND ') . "deleted_at IS NULL";
+            $whereClause .= (empty($whereClause) ? ' WHERE ' : ' AND ') . "{$this->table}.deleted_at IS NULL";
         }
 
-        $sql = "SELECT $columns FROM {$this->table} $whereClause{$this->order}{$this->limit}";
+        $sql = "SELECT $columns FROM {$this->table}{$joinClause}{$whereClause}{$this->order}{$this->limit}";
+
+        // 🔍 Debug
+        // echo "SQL: $sql<br>";
+        // echo "Bindings: ";
+        // print_r($this->bindings);
+
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($this->bindings);
 
+        $this->fields = ['*'];
         $this->resetQuery();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function first($fields = ['*'])
+    public function orWhere($field, $operator, $value = null)
     {
-        return $this->limit(1)->get($fields)[0] ?? null;
+        if ($value === null) {
+            $value = $operator;
+            $operator = '=';
+        }
+
+        $param = "param_" . count($this->bindings);
+        $condition = "$field $operator :$param";
+
+        if (empty($this->where)) {
+            $this->where[] = $condition;
+        } else {
+            $this->where[] = "OR $condition";
+        }
+
+        $this->bindings[$param] = $value;
+        return $this;
+    }
+
+    public function whereNull($field)
+    {
+        $this->where[] = "$field IS NULL";
+        return $this;
+    }
+
+    public function whereNotNull($field)
+    {
+        $this->where[] = "$field IS NOT NULL";
+        return $this;
+    }
+    public function first()
+    {
+        return $this->limit(1)->get()[0] ?? null;
     }
 
     protected function resetQuery()
@@ -189,5 +308,6 @@ class BaseModel
         $this->bindings = [];
         $this->order = '';
         $this->limit = '';
+        $this->joins = [];
     }
 }

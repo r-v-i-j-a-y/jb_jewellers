@@ -39,7 +39,7 @@
 
                                         <input type="password" name="password" id="password"
                                             class="form-control rounded-pill" placeholder="Password"
-                                            onkeypress="return event.charCode != 32">
+                                            onkeypress="return event.charCode != 32" autocomplete="off">
                                         <p class="m-1 text-danger error-message"></p>
                                     </div>
                                     <div class="text-end mb-3">

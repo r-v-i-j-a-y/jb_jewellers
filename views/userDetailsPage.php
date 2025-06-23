@@ -10,7 +10,8 @@
 
 <body ng-app="myApp" ng-controller="MyController as jb">
 
-    <div ng-init="jb.commonInit(<?= htmlspecialchars(json_encode($this->auth), ENT_QUOTES, 'UTF-8') ?>)">
+    <div
+        ng-init="jb.commonInit(<?= htmlspecialchars(json_encode($this->auth), ENT_QUOTES, 'UTF-8') ?>);jb.userDetailsInit(<?= htmlspecialchars(json_encode($userDetails), ENT_QUOTES, 'UTF-8') ?>)">
         <!-- Sidebar -->
         <?php include __DIR__ . '../common/sideBar.php'; ?>
 
@@ -30,7 +31,7 @@
 
                         <div class="row g-4">
                             <!-- Select User -->
-                            <div class="col-md-4">
+                            <!-- <div class="col-md-4">
                                 <label for="selectUserId">Select User</label>
                                 <select name="user_id" id="selectUserId" class="form-select p-2">
                                     <option value="" selected>select user</option>
@@ -39,83 +40,97 @@
                                     </option>
                                 </select>
                                 <p class="text-danger error-message m-0"></p>
-                            </div>
-
-                            <div class="col-md-4">
+                            </div> -->
+                            <input hidden type="text" id="user_id" name="user_id" class="form-control p-2"
+                                ng-model="jb.selectUserDetilas.id">
+                            <div class="col-md-6 col-lg-4">
                                 <label for="first_name">First Name</label>
-                                <input type="text" id="first_name" name="first_name" class="form-control p-2">
+                                <input type="text" id="first_name" name="first_name" class="form-control p-2"
+                                    ng-model="jb.selectUserDetilas.first_name">
                                 <p class="text-danger error-message m-0"></p>
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-6 col-lg-4">
                                 <label for="last_name">Last Name</label>
-                                <input type="text" id="last_name" name="last_name" class="form-control p-2">
+                                <input type="text" id="last_name" name="last_name" class="form-control p-2"
+                                    ng-model="jb.selectUserDetilas.last_name">
                                 <p class="text-danger error-message m-0"></p>
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-6 col-lg-4">
                                 <label for="dob">Date of Birth</label>
-                                <input type="date" id="dob" name="dob" class="form-control p-2">
+                                <input type="date" id="dob" name="dob" class="form-control p-2"
+                                    ng-model="jb.selectUserDetilas.dob">
                                 <p class="text-danger error-message m-0"></p>
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-6 col-lg-4">
                                 <label for="anniversary">Anniversary</label>
-                                <input type="date" id="anniversary" name="anniversary" class="form-control p-2">
+                                <input type="date" id="anniversary" name="anniversary" class="form-control p-2"
+                                    ng-model="jb.selectUserDetilas.anniversary">
                                 <p class="text-danger error-message m-0"></p>
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-6 col-lg-4">
                                 <label for="address1">Address 1</label>
-                                <input type="text" id="address1" name="address1" class="form-control p-2">
+                                <input type="text" id="address1" name="address1" class="form-control p-2"
+                                    ng-model="jb.selectUserDetilas.address1">
                                 <p class="text-danger error-message m-0"></p>
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-6 col-lg-4">
                                 <label for="address2">Address 2</label>
-                                <input type="text" id="address2" name="address2" class="form-control p-2">
+                                <input type="text" id="address2" name="address2" class="form-control p-2"
+                                    ng-model="jb.selectUserDetilas.address2">
                                 <p class="text-danger error-message m-0"></p>
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-6 col-lg-4">
                                 <label for="city">City</label>
-                                <input type="text" id="city" name="city" class="form-control p-2">
+                                <input type="text" id="city" name="city" class="form-control p-2"
+                                    ng-model="jb.selectUserDetilas.city">
                                 <p class="text-danger error-message m-0"></p>
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-6 col-lg-4">
                                 <label for="state">State</label>
-                                <input type="text" id="state" name="state" class="form-control p-2">
+                                <input type="text" id="state" name="state" class="form-control p-2"
+                                    ng-model="jb.selectUserDetilas.state">
                                 <p class="text-danger error-message m-0"></p>
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-6 col-lg-4">
                                 <label for="pincode">Pincode</label>
-                                <input type="text" id="pincode" name="pincode" class="form-control p-2">
+                                <input type="text" id="pincode" name="pincode" class="form-control p-2"
+                                    ng-model="jb.selectUserDetilas.pincode">
                                 <p class="text-danger error-message m-0"></p>
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-6 col-lg-4">
                                 <label for="pan_number">PAN Number</label>
-                                <input type="text" id="pan_number" name="pan_number" class="form-control p-2">
+                                <input type="text" id="pan_number" name="pan_number" class="form-control p-2"
+                                    ng-model="jb.selectUserDetilas.pan_number">
                                 <p class="text-danger error-message m-0"></p>
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-6 col-lg-4">
                                 <label for="aadhaar_number">Aadhaar Number</label>
-                                <input type="text" id="aadhaar_number" name="aadhaar_number" class="form-control p-2">
+                                <input type="text" id="aadhaar_number" name="aadhaar_number" class="form-control p-2"
+                                    ng-model="jb.selectUserDetilas.aadhaar_number">
                                 <p class="text-danger error-message m-0"></p>
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-6 col-lg-4">
                                 <label for="nominee">Nominee</label>
-                                <input type="text" id="nominee" name="nominee" class="form-control p-2">
+                                <input type="text" id="nominee" name="nominee" class="form-control p-2"
+                                    ng-model="jb.selectUserDetilas.nominee">
                                 <p class="text-danger error-message m-0"></p>
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-6 col-lg-4">
                                 <label for="nominee_relation">Nominee Relation</label>
-                                <input type="text" id="nominee_relation" name="nominee_relation" class="form-control p-2">
+                                <input type="text" id="nominee_relation" name="nominee_relation"
+                                    class="form-control p-2" ng-model="jb.selectUserDetilas.nominee_relation">
                                 <p class="text-danger error-message m-0"></p>
                             </div>
                         </div>

@@ -9,7 +9,7 @@ body {
 }
 /* Login */
 .left-panel {
-  background: url("../public/images/login-side-image.jpg") no-repeat center
+  background: url("/public/images/login-side-image.jpg") no-repeat center
     center;
   background-size: cover;
   color: white;

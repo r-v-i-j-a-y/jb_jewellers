@@ -15,12 +15,40 @@ class UserdetailsController extends SessionData
             require "views/homePage.php";
             exit;
         }
-
+        $getData = $_GET;
+        $userId = $getData['id'];
         $allUserDetails = new UserModel($pdo);
 
-        $data = $allUserDetails->where('role_id', '!=', 1)->get(['user_name', 'id', 'mobile', 'role_id']);
 
+        // $data = $allUserDetails->select(['users.user_name', 'users.id', 'users.mobile', 'users.role_id', 'user_details.first_name', 'user_details.last_name', 'user_details.dob', 'user_details.anniversary', 'user_details.address1', 'user_details.address2', 'user_details.city', 'user_details.state', 'user_details.pincode', 'user_details.pan_number', 'user_details.aadhaar_number', 'user_details.nominee', 'user_details.nominee_relation', 'user_details.updated_by', 'user_details.updated_at'])->join('user_details', 'user_details.user_id', '=', 'users.id')->where('users.role_id', '!=', 1)->where('users.id', '=', $userId)->get();
+        $data = $allUserDetails
+            ->select([
+                'users.user_name',
+                'users.id',
+                'users.mobile',
+                'users.role_id',
+                'user_details.first_name',
+                'user_details.last_name',
+                'user_details.dob',
+                'user_details.anniversary',
+                'user_details.address1',
+                'user_details.address2',
+                'user_details.city',
+                'user_details.state',
+                'user_details.pincode',
+                'user_details.pan_number',
+                'user_details.aadhaar_number',
+                'user_details.nominee',
+                'user_details.nominee_relation',
+                'user_details.updated_by',
+                'user_details.updated_at'
+            ])
+            ->leftJoin('user_details', 'user_details.user_id', '=', 'users.id')
+            ->where('users.role_id', '!=', 1)
+            ->where('users.id', '=', $userId)
+            ->first();
         // $data = json_encode($data, true);
+        // print_r($data);
 
         $this->view('userdetailsPage', ['userDetails' => $data]);
 
@@ -35,7 +63,7 @@ class UserdetailsController extends SessionData
 
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $data = $_POST;
-            $userId = $this->auth_user_role_id == 1 ? $data['user_id'] : $this->auth_user_id;
+            $userId = $data['user_id'];
             $data['anniversary'] = !empty($data['anniversary']) ? $data['anniversary'] : null;
             $data['address2'] = !empty($data['address2']) ? $data['address2'] : null;
             $validator = new Validator($_POST);
@@ -63,7 +91,7 @@ class UserdetailsController extends SessionData
             $validator->numeric('user_id');
 
             if (!$validator->passes()) {
-                Response::error('Validation failed', $validator->errors(), 422);
+                Response::error('Validation failed', $validator->errors(), 200);
             }
 
             try {
@@ -74,12 +102,52 @@ class UserdetailsController extends SessionData
                 }
             } catch (PDOException $e) {
 
-                Response::error('Database error occurred.', ['database' => [$e->getMessage()]], 500);
+                Response::error('Database error occurred.', ['database' => [$e->getMessage()]], 200);
             }
 
 
         }
 
+
+    }
+
+    public function allUser()
+    {
+        $pdo = DB::connection();
+        if (AuthMiddleware::handle()) {
+            require "views/homePage.php";
+            exit;
+        }
+
+        $allUserDetails = new UserModel($pdo);
+
+        $data = $allUserDetails
+            ->select([
+                'users.user_name',
+                'users.id',
+                'users.mobile',
+                'users.role_id',
+                'user_details.first_name',
+                'user_details.last_name',
+                'user_details.dob',
+                'user_details.anniversary',
+                'user_details.address1',
+                'user_details.address2',
+                'user_details.city',
+                'user_details.state',
+                'user_details.pincode',
+                'user_details.pan_number',
+                'user_details.aadhaar_number',
+                'user_details.nominee',
+                'user_details.nominee_relation',
+                'user_details.updated_by',
+                'user_details.updated_at'
+            ])
+            ->leftJoin('user_details', 'user_details.user_id', '=', 'users.id')
+            ->where('users.role_id', '!=', 1)
+            ->get();
+
+        $this->view('userPage', ['userDetails' => $data]);
 
     }
 

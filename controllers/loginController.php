@@ -35,10 +35,10 @@ class LoginController extends SessionData
 
                 Response::success('login successful');
             } else {
-                Response::error('Password faild', 'password is not match', 422);
+                Response::error('Password faild', 'password is not match', 200);
             }
         } else {
-            Response::error('User faild', 'mobile number not found', 422);
+            Response::error('User faild', 'mobile number not found', 200);
         }
 
         print_r($user);
