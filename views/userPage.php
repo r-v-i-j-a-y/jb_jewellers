@@ -38,7 +38,7 @@
                         <tbody>
                             <tr ng-repeat="user in jb.allUserList track by $index">
                                 <td>{{ $index +1 }}</td>
-                                <td>{{ user.user_name }}</td>
+                                <td class="text-capitalize">{{ user.user_name }}</td>
                                 <td>{{ user.mobile }}</td>
                                 <td>{{ user.email }}</td>
                                 <td>{{ user.created_at }}</td>

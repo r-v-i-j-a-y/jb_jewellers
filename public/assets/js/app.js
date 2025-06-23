@@ -418,6 +418,10 @@ myApp.controller("MyController", [
               linkName: "view users",
             },
             {
+              link: "/schemes",
+              linkName: "schemes",
+            },
+            {
               link: "/chit-details",
               linkName: "chit details",
             },
@@ -527,8 +531,8 @@ myApp.directive("datatable", function () {
                 ],
                 pageLength: 10,
                 lengthMenu: [
-                  [10, 25, 50, 100],
-                  ["10", "25", "50", "100"],
+                  [10, 20, 50, 100],
+                  ["10", "20", "50", "100"],
                 ],
               });
             }, 0);

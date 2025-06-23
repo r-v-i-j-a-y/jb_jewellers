@@ -19,6 +19,8 @@ $router->post('/user-details', 'UserDetailsController@update');
 $router->get('/view-users', 'UserDetailsController@allUser');
 $router->get('/logout', 'LogoutController@index');
 
+$router->get('/schemes', 'SchemeController@index');
+
 // $router->get('/about', 'HomeController@about');
 // $router->get('/user/{id}', 'HomeController@show');
 // $router->post('/user/save', 'HomeController@store');
