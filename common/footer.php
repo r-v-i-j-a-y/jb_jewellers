@@ -1,5 +1,5 @@
 <script src='./assets/js/lib/jquery.js'></script>
-<script src="./assets/js/lib/angular.js"></script>
+<!-- <script src="./assets/js/lib/angular.js"></script> -->
 <script src="./assets/js/lib/bootstrap.min.js"></script>
 <script src="./assets/js/lib/toaster/iziToast.min.js"></script>
 <!-- <script src="/js/lib/tables/datatables.min.js"></script>

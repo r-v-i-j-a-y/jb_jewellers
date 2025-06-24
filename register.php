@@ -63,7 +63,7 @@ include './common/head.php'; ?>
 
 
                                     <button class="btn btn-primary w-100 rounded-pill mt-3"
-                                        ng-click="jb.registerSubmit($event,'registerForm')">Register</button>
+                                        onclick="registerSubmit(event,'registerForm')">Register</button>
                                 </form>
 
                                 <p class="text-center mt-3 small">

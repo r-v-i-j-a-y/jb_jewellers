@@ -31,7 +31,7 @@ $pageTitle = 'Dashboard';
 include './common/head.php'; ?>
 
 <body ng-app="myApp" ng-controller="MyController as jb" class="bg-light">
-    <div ng-init="jb.commonInit();jb.chitsInit(<?= htmlspecialchars(json_encode($chitData), ENT_QUOTES, 'UTF-8') ?>)">
+    <div>
         <!-- Sidebar -->
         <?php include './common/sideBar.php'; ?>
 
@@ -50,42 +50,41 @@ include './common/head.php'; ?>
                             <a class="btn btn-warning rounded-pill"
                                 href="chit-create.php?scheme_id=<?php echo $_GET['scheme_id'] ?>">Add Chit</a>
                         </div>
-                        <div class="col-md-6 col-lg-4" ng-repeat="chit in jb.chitData">
-                            <div class="card shadow-sm border-0" style="background-color:rgb(211, 255, 215);">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <?php foreach ($chitData as $chit): ?>
+                            <?php $jsonChit = htmlspecialchars(json_encode($chit), ENT_QUOTES, 'UTF-8'); ?>
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card shadow-sm border-0" style="background-color:rgb(211, 255, 215);">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
 
-                                        <i class="bi bi-bookmark"></i>
-                                    </div>
-                                    <h5 class="card-title fw-bold text-center">{{chit.chit_amount}} ₹</h5>
-
-                                    <div class="d-flex gap-2 mb-3">
-                                        <span class="badge bg-light text-dark border">{{chit.chit_tenure}}
-                                            Months</span>
-                                        <span class="badge bg-light border" ng-class="{'text-success': chit.status === 'active',
-                                            'text-danger': chit.status === 'inactive'}">{{chit.status}}</span>
-                                    </div>
-                                    <div class="d-flex justify-content-between">
-                                        <div class="form-check form-switch d-flex align-items-center mt-2">
-                                            <input class="form-check-input me-2" type="checkbox"
-                                                id="chitStatusSwitch{{chit.id}}" ng-checked="chit.status === 'active'"
-                                                ng-click="jb.chitStatusChangeModal(chit)" role="switch"
-                                                data-bs-toggle="modal" data-bs-target="#chitStatusModal">
-                                            <label class="form-check-label fw-bold" for="chitStatusSwitch" ng-class="{
-                                                            'text-success': chit.status === 'active',
-                                                            'text-danger': chit.status === 'inactive'
-                                                        }">
-                                                {{ chit.status === 'active' ? 'Active' : 'Inactive' }}
-                                            </label>
+                                            <i class="bi bi-bookmark"></i>
                                         </div>
-                                        <!-- <div>
-                                            <a class="btn btn-primary rounded-pill"
-                                                href="chit-list?id={{chit.id}}">Chit List</a>
-                                        </div> -->
+                                        <h5 class="card-title fw-bold text-center">
+                                            <?= $chit['chit_amount'] ?> ₹
+                                        </h5>
+
+                                        <div class="d-flex gap-2 mb-3">
+                                            <span
+                                                class="badge bg-light border <?= $chit['status'] == "active" ? "text-success" : "text-danger" ?>"><?= $chit['status'] ?></span>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <div class="form-check form-switch d-flex align-items-center mt-2">
+                                                <input class="form-check-input me-2" type="checkbox"
+                                                    id="chitStatusSwitch<?= $chit['id'] ?>"
+                                                    onclick="chitStatusChangeModal(<?= $jsonChit ?>)" role="switch"
+                                                    <?= $chit['status'] == "active" ? "checked" : "" ?>>
+                                                <label
+                                                    class="form-check-label fw-bold <?= $chit['status'] == "active" ? "text-success" : "text-danger" ?>"
+                                                    for="chitStatusSwitch">
+                                                    <?= $chit['status'] == "active" ? "Active" : "Inactive" ?>
+
+                                                </label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        <?php endforeach ?>
 
                     </div>
                 </div>
@@ -105,9 +104,8 @@ include './common/head.php'; ?>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
-                                    ng-click="jb.chitStatusChangeModalClose()">Close</button>
-                                <button type="button" class="btn btn-primary"
-                                    ng-click="jb.confirmChitStatusChange()">Yes,
+                                    onclick="chitStatusChangeModalClose()">Close</button>
+                                <button type="button" class="btn btn-primary" onclick="confirmChitStatusChange()">Yes,
                                     Change</button>
                             </div>
                         </div>

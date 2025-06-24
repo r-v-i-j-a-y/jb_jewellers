@@ -50,8 +50,8 @@ include './common/head.php'; ?>
                                         <a href="#" class="text-decoration-none small">Forgot password?</a>
                                     </div>
 
-                                    <button class="btn btn-danger w-100 rounded-pill"
-                                        ng-click="jb.loginSubmit($event,'loginForm')">Login</button>
+                                    <button class="btn btn-danger w-100 rounded-pill" type="submit"
+                                        onclick="loginSubmit(event,'loginForm')">Login</button>
                                 </form>
 
                                 <p class="text-center mt-3 small">

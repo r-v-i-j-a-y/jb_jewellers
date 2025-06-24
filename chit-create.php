@@ -5,23 +5,6 @@ require './config/db.php';
 
 auth_protect();
 
-
-$sql = "SELECT 
-                    id, 
-                    chit_amount, 
-                    scheme_id, 
-                    chit_created_by, 
-                    created_at, 
-                    updated_at, 
-                    status
-                FROM chits
-                WHERE scheme_id = :scheme_id
-            ";
-$pdo = db_connection();
-$stmt = $pdo->prepare($sql);
-$stmt->execute(['scheme_id' => $_GET['scheme_id']]);
-$chitData = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
 ?>
 
 <!DOCTYPE html>
@@ -31,7 +14,7 @@ $pageTitle = 'Dashboard';
 include './common/head.php'; ?>
 
 <body ng-app="myApp" ng-controller="MyController as jb" class="bg-light">
-    <div ng-init="jb.commonInit();jb.chitsInit(<?= htmlspecialchars(json_encode($chitData), ENT_QUOTES, 'UTF-8') ?>)">
+    <div>
         <!-- Sidebar -->
         <?php include './common/sideBar.php'; ?>
 
@@ -85,7 +68,7 @@ include './common/head.php'; ?>
                         <!-- Submit Button -->
                         <div class="text-end mt-4">
                             <button type="button" class="btn btn-warning"
-                                ng-click="jb.chitCreate($event, 'chitCreateForm')">
+                                onclick="chitCreate(event, 'chitCreateForm')">
                                 Create
                             </button>
                         </div>

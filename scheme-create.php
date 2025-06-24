@@ -5,25 +5,6 @@ require './config/db.php';
 
 auth_protect();
 
-
-$sql = "
-            SELECT 
-                schemes.id,
-                schemes.scheme_name,
-                schemes.scheme_tenure,
-                schemes.scheme_status,
-                schemes.scheme_created_by,
-                schemes.created_at,
-                schemes.updated_at,
-                users.user_name
-            FROM schemes
-            LEFT JOIN users ON users.id = schemes.scheme_created_by
-        ";
-
-$pdo = db_connection();
-$stmt = $pdo->prepare($sql);
-$stmt->execute();
-$schemeData = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -33,8 +14,7 @@ $pageTitle = 'Dashboard';
 include './common/head.php'; ?>
 
 <body ng-app="myApp" ng-controller="MyController as jb" class="bg-light">
-    <div
-        ng-init="jb.commonInit();jb.schemesInit(<?= htmlspecialchars(json_encode($schemeData), ENT_QUOTES, 'UTF-8') ?>)">
+    <div>
         <!-- Sidebar -->
         <?php include './common/sideBar.php'; ?>
 
@@ -44,7 +24,7 @@ include './common/head.php'; ?>
             <?php include './common/topBar.php'; ?>
 
             <!-- Scrollable Content -->
-              <div class="content-scrollable card border-0">
+            <div class="content-scrollable card border-0">
                 <div class="container">
                     <form id="schemeCreateForm" class="card p-4 shadow form-section mt-5">
                         <div class="mb-3">
@@ -67,15 +47,13 @@ include './common/head.php'; ?>
                                 ng-model="jb.selectUserDetilas.id"> -->
                             <div class="col-md-6 ">
                                 <label for="scheme_name">Scheme Name</label>
-                                <input type="text" id="scheme_name" name="scheme_name" class="form-control p-2"
-                                    >
+                                <input type="text" id="scheme_name" name="scheme_name" class="form-control p-2">
                                 <p class="text-danger error-message m-0"></p>
                             </div>
 
                             <div class="col-md-6">
                                 <label for="scheme_tenure">Scheme Tenure</label>
-                                <input type="number" id="scheme_tenure" name="scheme_tenure" class="form-control p-2"
-                                    >
+                                <input type="number" id="scheme_tenure" name="scheme_tenure" class="form-control p-2">
                                 <p class="text-danger error-message m-0"></p>
                             </div>
 
@@ -90,7 +68,7 @@ include './common/head.php'; ?>
                         <!-- Submit Button -->
                         <div class="text-end mt-4">
                             <button type="button" class="btn btn-primary"
-                                ng-click="jb.schemeCreate($event, 'schemeCreateForm')">
+                                onclick="schemeCreate(event, 'schemeCreateForm')">
                                 Create
                             </button>
                         </div>
