@@ -1,29 +1,26 @@
 <?php
-class DB
+function db_connection()
 {
-    private static $pdo;
+    static $pdo = null;
 
-    public static function connection()
-    {
-        if (!self::$pdo) {
-            $env = parse_ini_file('.env');
+    if ($pdo === null) {
+        $env = parse_ini_file(__DIR__ . '/../.env');
 
-            $host = $env['HOST'] ?? 'localhost';
-            $db = $env['DATABASE'] ?? 'mydb';
-            $user = $env['USERNAME'] ?? 'root';
-            $pass = $env['PASSWORD'] ?? '';
-            $port = $env['PORT'] ?? '3306';
+        $host = $env['HOST'] ?? 'localhost';
+        $db = $env['DATABASE'] ?? 'mydb';
+        $user = $env['USERNAME'] ?? 'root';
+        $pass = $env['PASSWORD'] ?? '';
+        $port = $env['PORT'] ?? '3306';
 
-            $dsn = "mysql:host=$host;port=$port;dbname=$db;charset=utf8mb4";
+        $dsn = "mysql:host=$host;port=$port;dbname=$db;charset=utf8mb4";
 
-            try {
-                self::$pdo = new PDO($dsn, $user, $pass);
-                self::$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            } catch (PDOException $e) {
-                die("PDO Connection failed: " . $e->getMessage());
-            }
+        try {
+            $pdo = new PDO($dsn, $user, $pass);
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        } catch (PDOException $e) {
+            die("PDO Connection failed: " . $e->getMessage());
         }
-
-        return self::$pdo;
     }
+
+    return $pdo;
 }

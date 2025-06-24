@@ -1,14 +1,37 @@
 <?php
-require_once 'services/router.php';
-require_once 'routes/routes.php';
-require_once 'services/helpers.php';
 
-$router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
-function includeWithData($filePath, $data = [])
-{
-    extract($data);
-    include $filePath;
-}
+require './functions/middleware.php';
 
-$action = $url[1] ?? 'index';
+auth_protect();
+?>
 
+<!DOCTYPE html>
+<html>
+<?php
+$pageTitle = 'Dashboard';
+include './common/head.php'; ?>
+
+<body ng-app="myApp" ng-controller="MyController as jb" class="bg-light">
+    <div>
+        <!-- Sidebar -->
+        <?php include './common/sideBar.php'; ?>
+
+        <!-- Main Content Area -->
+        <div class="main-container">
+            <!-- Fixed Topbar -->
+            <?php include './common/topBar.php'; ?>
+
+            <!-- Scrollable Content -->
+            <div class="content-scrollable">
+                <div class="row g-4">
+                    <!-- Cards and Charts go here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+<?php include './common/footer.php'; ?>
+
+</html>
