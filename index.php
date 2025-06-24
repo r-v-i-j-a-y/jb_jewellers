@@ -12,7 +12,7 @@ $pageTitle = 'Dashboard';
 include './common/head.php'; ?>
 
 <body ng-app="myApp" ng-controller="MyController as jb" class="bg-light">
-    <div>
+    <div ng-init="jb.commonInit()">
         <!-- Sidebar -->
         <?php include './common/sideBar.php'; ?>
 

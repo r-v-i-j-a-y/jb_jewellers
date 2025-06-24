@@ -370,7 +370,7 @@ myApp.controller("MyController", [
         processData: false, // Prevent jQuery from processing data
         contentType: false, // Prevent jQuery from setting content-type
         success: function (response) {
-          const { status, message,errors } = response;
+          const { status, message, errors } = response;
           if (status == "success") {
             window.location = "index.php";
           } else {
@@ -444,34 +444,33 @@ myApp.controller("MyController", [
     };
 
     /************************* Common Init Function ********************/
-    jb.commonInit = (authData) => {
-      debugger;
+    jb.commonInit = () => {
       jb.navList = [
         {
           title: "members details",
           list: [
             {
-              link: "/",
+              link: "index.php",
               linkName: "Dashboard",
             },
             {
-              link: "/purchase-scheme",
+              link: "purchase-scheme.php",
               linkName: "purchase scheme",
             },
             {
-              link: "/pays-cheme",
+              link: "pays-cheme.php",
               linkName: "pay scheme",
             },
             {
-              link: "/view-users",
+              link: "view-users.php",
               linkName: "view users",
             },
             {
-              link: "/schemes",
+              link: "schemes.php",
               linkName: "schemes",
             },
             {
-              link: "/chit-details",
+              link: "chit-details.php",
               linkName: "chit details",
             },
           ],
@@ -480,30 +479,30 @@ myApp.controller("MyController", [
           title: "transaction details",
           list: [
             {
-              link: "/month-wise-payment",
+              link: "month-wise-payment.php",
               linkName: "month wise payment",
             },
             {
-              link: "/chit-wise-payment",
+              link: "chit-wise-payment.php",
               linkName: "chit wise payment",
             },
             {
-              link: "/pending-payment",
+              link: "pending-payment.php",
               linkName: "pending payment",
             },
             {
-              link: "/change-status",
+              link: "change-status.php",
               linkName: "change status",
             },
             {
-              link: "/close-scheme",
+              link: "close-scheme.php",
               linkName: "close scheme",
             },
           ],
         },
       ];
-      jb.currentPath = window.location.pathname;
-      jb.authData = authData;
+      // jb.currentPath = window.location.pathname;
+      // jb.authData = authData;
 
       if (!$rootScope.$$phase) {
         $rootScope.$apply(); // only if no digest is running
@@ -550,7 +549,7 @@ myApp.controller("MyController", [
 
       await $.ajax({
         type: "POST",
-        url: "scheme-create",
+        url: "post_request/schemeCreateRequest.php",
         data: formData,
         processData: false,
         contentType: false,
@@ -583,7 +582,7 @@ myApp.controller("MyController", [
     jb.confirmStatusChange = async function () {
       await $.ajax({
         type: "POST",
-        url: "scheme-status-update",
+        url: "post_request/schemeRequest.php",
         data: { id: jb.schemeData.id },
         success: function (response) {
           const { status, message, errors } = response;
@@ -626,7 +625,7 @@ myApp.controller("MyController", [
 
       await $.ajax({
         type: "POST",
-        url: "chit-create",
+        url: "post_request/chitCreateRequest.php",
         data: formData,
         processData: false,
         contentType: false,
@@ -658,7 +657,7 @@ myApp.controller("MyController", [
     jb.confirmChitStatusChange = async function () {
       await $.ajax({
         type: "POST",
-        url: "chit-status-update",
+        url: "post_request/chitRequest.php",
         data: { id: jb.chitSelected.id },
         success: function (response) {
           const { status, message, errors } = response;
