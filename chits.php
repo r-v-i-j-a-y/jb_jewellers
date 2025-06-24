@@ -51,7 +51,7 @@ include './common/head.php'; ?>
                                 href="chit-create.php?scheme_id=<?php echo $_GET['scheme_id'] ?>">Add Chit</a>
                         </div>
                         <div class="col-md-6 col-lg-4" ng-repeat="chit in jb.chitData">
-                            <div class="card shadow-sm border-0" style="background-color: #e9f0ff;">
+                            <div class="card shadow-sm border-0" style="background-color:rgb(211, 255, 215);">
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between align-items-center mb-3">
 

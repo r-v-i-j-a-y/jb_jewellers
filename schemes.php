@@ -83,7 +83,7 @@ include './common/head.php'; ?>
                                             </label>
                                         </div>
                                         <div>
-                                            <a class="btn btn-primary rounded-pill"
+                                            <a class="btn btn-success rounded-pill"
                                                 href="chits.php?scheme_id={{scheme.id}}">Chit List</a>
                                         </div>
                                     </div>
