@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $pdo = db_connection();
 
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE mobile = :mobile LIMIT 1");
+    $stmt = $pdo->prepare("SELECT pr_users.password, pr_users.user_name, pr_users.id, pr_users.mobile, pr_users.role_id, pr_roles.role_name FROM pr_users LEFT JOIN pr_roles ON pr_users.role_id = pr_roles.id WHERE mobile = :mobile LIMIT 1  ");
     $stmt->execute(['mobile' => $mobile]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 

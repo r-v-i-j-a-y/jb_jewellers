@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pdo = db_connection();
 
         // ✅ Check if chit exists
-        $stmt = $pdo->prepare("SELECT * FROM chits WHERE id = :id LIMIT 1");
+        $stmt = $pdo->prepare("SELECT * FROM pr_chits WHERE id = :id LIMIT 1");
         $stmt->execute(['id' => $data['id']]);
         $chit = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $newStatus = ($chit['status'] === 'active') ? 'inactive' : 'active';
 
             // ✅ Update chit status
-            $updateStmt = $pdo->prepare("UPDATE chits SET status = :status WHERE id = :id");
+            $updateStmt = $pdo->prepare("UPDATE pr_chits SET status = :status WHERE id = :id");
             $updateStmt->execute([
                 'status' => $newStatus,
                 'id' => $data['id']

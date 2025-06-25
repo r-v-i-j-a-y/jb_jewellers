@@ -3,21 +3,22 @@
 require './functions/middleware.php';
 require './config/db.php';
 
-auth_protect();
+$authData = auth_protect();
+$authUserId = $authData['id'];
 
 
 $sql = "
             SELECT 
-                schemes.id,
-                schemes.scheme_name,
-                schemes.scheme_tenure,
-                schemes.scheme_status,
-                schemes.scheme_created_by,
-                schemes.created_at,
-                schemes.updated_at,
-                users.user_name
-            FROM schemes
-            LEFT JOIN users ON users.id = schemes.scheme_created_by
+                pr_schemes.id,
+                pr_schemes.scheme_name,
+                pr_schemes.scheme_tenure,
+                pr_schemes.scheme_status,
+                pr_schemes.scheme_created_by,
+                pr_schemes.created_at,
+                pr_schemes.updated_at,
+                pr_users.user_name
+            FROM pr_schemes
+            LEFT JOIN pr_users ON pr_users.id = pr_schemes.scheme_created_by
         ";
 
 $pdo = db_connection();

@@ -73,10 +73,24 @@ include './common/head.php'; ?>
                     <div class="row g-4">
                         <!-- Card 1 -->
                         <div
-                            class="d-flex justify-content-end">
+                            class="d-flex justify-content-between align-items-center  <?php echo !$isAdmin ? "visually-hidden" : "" ?>">
+                            <!-- Select User -->
+                            <div class="col-md-4">
+                                <label for="selectUserId">Select User</label>
+                                <select name="user_id" id="selectUserId" class="form-select p-2">
+                                    <option value="" selected>select user</option>
+                                    <?php foreach ($userData as $user): ?>
+                                        <?php
+                                        $selected = (!$isAdmin && $user['id'] == $authUserId) ? 'selected="selected"' : '';
+                                        ?>
+                                        <option value="<?= $user['id'] ?>" <?= $selected ?>>
+                                            <?= $user['user_name'] ?> - <?= $user['mobile'] ?>
+                                        </option>
+                                    <?php endforeach ?>
+                                </select>
+                                <p class="text-danger error-message m-0" id="selectUserIdError"></p>
+                            </div>
 
-                            <a class="btn btn-warning rounded-pill"
-                                href="chit-create.php?scheme_id=<?php echo $_GET['scheme_id'] ?>">Add Chit</a>
                         </div>
                         <!-- <input hidden type="text" id="user_id" name="user_id" class="form-control p-2"
                                 ng-model="jb.selectUserDetilas.id"> -->
@@ -97,20 +111,13 @@ include './common/head.php'; ?>
                                             <span
                                                 class="badge bg-light border <?= $chit['status'] == "active" ? "text-success" : "text-danger" ?>"><?= $chit['status'] ?></span>
                                         </div>
-                                            <div class="d-flex justify-content-between">
-                                                <div class="form-check form-switch d-flex align-items-center mt-2">
-                                                    <input class="form-check-input me-2" type="checkbox"
-                                                        id="chitStatusSwitch<?= $chit['id'] ?>"
-                                                        onclick="chitStatusChangeModal(<?= $jsonChit ?>)" role="switch"
-                                                        <?= $chit['status'] == "active" ? "checked" : "" ?>>
-                                                    <label
-                                                        class="form-check-label fw-bold <?= $chit['status'] == "active" ? "text-success" : "text-danger" ?>"
-                                                        for="chitStatusSwitch">
-                                                        <?= $chit['status'] == "active" ? "Active" : "Inactive" ?>
 
-                                                    </label>
-                                                </div>
+                                            <div class="d-flex justify-content-end">
+                                                <button class="btn btn-primary rounded-pill"
+                                                    onclick="purchaseChitModal(<?= $chit['id'] ?>,<?= $_GET['scheme_id'] ?>,'AM')">Purchase</button>
                                             </div>
+
+
                                     </div>
                                 </div>
                             </div>

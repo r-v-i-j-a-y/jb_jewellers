@@ -8,6 +8,7 @@ function auth_protect()
         header("Location: login.php"); // adjust if your login URL is different
         exit;
     }
+    return $_SESSION['auth'];
 }
 function auth_check()
 {

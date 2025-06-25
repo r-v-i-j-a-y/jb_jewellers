@@ -3,7 +3,8 @@
 require './functions/middleware.php';
 require './config/db.php';
 
-auth_protect();
+$authData = auth_protect();
+$authUserId = $authData['id'];
 
 ?>
 

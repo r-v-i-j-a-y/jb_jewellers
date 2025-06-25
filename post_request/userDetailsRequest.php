@@ -29,8 +29,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     validate_required($data, 'user_id', $errors);
     validate_numeric($data, 'user_id', $errors);
 
-    validate_unique($data, 'pan_number', 'user_details', 'pan_number', $pdo, $errors, $userId, 'user_id');
-    validate_unique($data, 'aadhaar_number', 'user_details', 'aadhaar_number', $pdo, $errors, $userId, 'user_id');
+    validate_unique($data, 'pan_number', 'pr_user_details', 'pan_number', $pdo, $errors, $userId, 'user_id');
+    validate_unique($data, 'aadhaar_number', 'pr_user_details', 'aadhaar_number', $pdo, $errors, $userId, 'user_id');
 
     if (!empty($errors)) {
         send_json_error('Validation failed', $errors, 200);
@@ -38,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     try {
         $sql = "
-            UPDATE user_details SET
+            UPDATE pr_user_details SET
                 first_name = :first_name,
                 last_name = :last_name,
                 dob = :dob,

@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $pdo = db_connection();
 
-        $stmt = $pdo->prepare("SELECT * FROM schemes WHERE scheme_name = :scheme_name AND scheme_tenure = :scheme_tenure LIMIT 1");
+        $stmt = $pdo->prepare("SELECT * FROM pr_schemes WHERE scheme_name = :scheme_name AND scheme_tenure = :scheme_tenure LIMIT 1");
         $stmt->execute([
             'scheme_name' => $data['scheme_name'],
             'scheme_tenure' => $data['scheme_tenure']
@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             send_json_error('Unauthorized', ['auth' => 'User not logged in'], 401);
         }
 
-        $insertStmt = $pdo->prepare("INSERT INTO schemes (scheme_name, scheme_tenure, scheme_created_by, created_at) VALUES (:scheme_name, :scheme_tenure, :created_by, NOW())");
+        $insertStmt = $pdo->prepare("INSERT INTO pr_schemes (scheme_name, scheme_tenure, scheme_created_by, created_at) VALUES (:scheme_name, :scheme_tenure, :created_by, NOW())");
         $insertStmt->execute([
             'scheme_name' => $data['scheme_name'],
             'scheme_tenure' => $data['scheme_tenure'],

@@ -3,36 +3,37 @@
 require './functions/middleware.php';
 require './config/db.php';
 
-auth_protect();
+$authData = auth_protect();
+$authUserId = $authData['id'];
 
 
 $sql = "
         SELECT 
-            users.user_name,
-            users.id,
-            users.mobile,
-            users.email,
-            users.role_id,
-            users.created_at,
-            users.status,
-            user_details.first_name,
-            user_details.last_name,
-            user_details.dob,
-            user_details.anniversary,
-            user_details.address1,
-            user_details.address2,
-            user_details.city,
-            user_details.state,
-            user_details.pincode,
-            user_details.pan_number,
-            user_details.aadhaar_number,
-            user_details.nominee,
-            user_details.nominee_relation,
-            user_details.updated_by,
-            user_details.updated_at
-        FROM users
-        LEFT JOIN user_details ON user_details.user_id = users.id
-        WHERE users.role_id != 1
+            pr_users.user_name,
+            pr_users.id,
+            pr_users.mobile,
+            pr_users.email,
+            pr_users.role_id,
+            pr_users.created_at,
+            pr_users.status,
+            pr_user_details.first_name,
+            pr_user_details.last_name,
+            pr_user_details.dob,
+            pr_user_details.anniversary,
+            pr_user_details.address1,
+            pr_user_details.address2,
+            pr_user_details.city,
+            pr_user_details.state,
+            pr_user_details.pincode,
+            pr_user_details.pan_number,
+            pr_user_details.aadhaar_number,
+            pr_user_details.nominee,
+            pr_user_details.nominee_relation,
+            pr_user_details.updated_by,
+            pr_user_details.updated_at
+        FROM pr_users
+        LEFT JOIN pr_user_details ON pr_user_details.user_id = pr_users.id
+        WHERE pr_users.role_id != 1
     ";
 
 $pdo = db_connection();

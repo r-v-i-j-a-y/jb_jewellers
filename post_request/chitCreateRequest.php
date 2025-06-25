@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pdo = db_connection();
 
         // ✅ Check if chit already exists
-        $checkStmt = $pdo->prepare("SELECT * FROM chits WHERE scheme_id = :scheme_id AND chit_amount = :chit_amount LIMIT 1");
+        $checkStmt = $pdo->prepare("SELECT * FROM pr_chits WHERE scheme_id = :scheme_id AND chit_amount = :chit_amount LIMIT 1");
         $checkStmt->execute([
             'scheme_id' => $data['scheme_id'],
             'chit_amount' => $data['chit_amount']
@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // ✅ Insert chit
         $insertStmt = $pdo->prepare("
-            INSERT INTO chits (scheme_id, chit_amount, chit_created_by, created_at)
+            INSERT INTO pr_chits (scheme_id, chit_amount, chit_created_by, created_at)
             VALUES (:scheme_id, :chit_amount, :created_by, NOW())
         ");
         $insertStmt->execute([

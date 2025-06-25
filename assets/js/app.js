@@ -503,7 +503,7 @@ function chitStatusChangeModalClose() {
   }
 }
 
-confirmChitStatusChange = async function () {
+async function confirmChitStatusChange() {
   await $.ajax({
     type: "POST",
     url: "post_request/chitRequest.php",
@@ -525,10 +525,127 @@ confirmChitStatusChange = async function () {
       }
     },
   });
-  if (!$rootScope.$$phase) {
-    $rootScope.$apply(); // only if no digest is running
+}
+
+/********************** Purchase Chit  *********************/
+let purchaseChitId = null;
+let purchaseSchemeId = null;
+let schemeChitNumber = null;
+
+function purchaseChitModal(chitId, schemeId, chitNumber) {
+  purchaseChitId = chitId;
+  purchaseSchemeId = schemeId;
+  schemeChitNumber = chitNumber;
+  if (!$("#selectUserId").val()) {
+    $("#selectUserIdError").html("Select user");
+    return;
   }
-};
+
+  $("#selectUserIdError").html("");
+  const modal = bootstrap.Modal.getOrCreateInstance($("#chitPurchaseModal")[0]);
+  modal.show();
+}
+
+async function confirmChitPurchase() {
+  await $.ajax({
+    type: "POST",
+    url: "post_request/chitPurchase.php",
+    data: {
+      chit_id: purchaseChitId,
+      scheme_id: purchaseSchemeId,
+      chit_number: schemeChitNumber,
+      user_id: $("#selectUserId").val(),
+    },
+    success: function (response) {
+      const { status, message, errors } = response;
+      if (status == "success") {
+        ToastService.success("Success", message);
+
+        const modal = bootstrap.Modal.getOrCreateInstance(
+          $("#chitPurchaseModal")[0]
+        );
+        modal.hide();
+        // window.location.reload();
+      } else {
+        ToastService.error("Error", message);
+      }
+    },
+  });
+}
+
+/**************************** Chit status change ***************************/
+let data = null;
+async function chitStatusChange(id) {
+  $chitStatus = $(`#chitStatus${id}`).val();
+
+  data = {
+    chit_id: id,
+    status: $chitStatus,
+  };
+  $("#selectUserIdError").html("");
+  const modal = bootstrap.Modal.getOrCreateInstance($("#chaneStatusModal")[0]);
+  modal.show();
+}
+
+async function confirmChangeStatus() {
+  await $.ajax({
+    type: "POST",
+    url: "post_request/changeStatus.php",
+    data,
+    success: function (response) {
+      const { status, message, errors } = response;
+      if (status == "success") {
+        ToastService.success("Success", message);
+
+        const modal = bootstrap.Modal.getOrCreateInstance(
+          $("#chaneStatusModal")[0]
+        );
+        modal.hide();
+        window.location.reload();
+      } else {
+        ToastService.error("Error", message);
+      }
+    },
+  });
+}
+
+function confirmChangeStatusClose() {
+  window.location.reload();
+}
+
+/**************************** Pay Chit ***************************/
+function payChitModal(id, amount) {
+  debugger;
+  const modal = bootstrap.Modal.getOrCreateInstance($("#payChitModal")[0]);
+  modal.show();
+
+  data = {
+    chit_id: id,
+    amount,
+  };
+}
+
+async function confirmChitPayment() {
+  await $.ajax({
+    type: "POST",
+    url: "post_request/chitPaymentRequest.php",
+    data,
+    success: function (response) {
+      const { status, message, errors } = response;
+      if (status == "success") {
+        ToastService.success("Success", message);
+
+        const modal = bootstrap.Modal.getOrCreateInstance(
+          $("#chaneStatusModal")[0]
+        );
+        modal.hide();
+        window.location.reload();
+      } else {
+        ToastService.error("Error", message);
+      }
+    },
+  });
+}
 
 /********************* Data Table  *************************/
 
@@ -553,3 +670,48 @@ new DataTable("#userTable", {
     ["10", "20", "50", "100"],
   ],
 });
+new DataTable("#statusTable", {
+  pageLength: 10,
+  lengthMenu: [
+    [10, 20, 50, 100],
+    ["10", "20", "50", "100"],
+  ],
+});
+
+/*********************** Pay scheme user select **********************/
+function paySchemeUserSelect() {
+  let user_id = $("#selectUserId").val();
+  window.location = `pay-scheme.php?user_id=${user_id}`;
+}
+
+//  <?php
+//                                   // Create a DatePeriod to iterate through each month
+//                                   $startDate = new DateTime($userChit['chit']['start_date']);
+//                                   $endDate = new DateTime($userChit['chit']['end_date']);
+//                                   $period = new DatePeriod($startDate, $interval, $endDate);
+//                                   foreach ($period as $index => $date):
+//                                       ?>
+//                                       <!-- // Format and display the month and year -->
+//                                       <div class=" d-flex justify-content-between text-muted ">
+//                                           <p><?= $date->format('F Y') ?></p>
+//                                           <p>pending</p>
+//                                       </div>
+//                                       <!-- echo $date->format('F Y') . "\n"; -->
+
+//                                       <!-- // If this is the first month, also show the start day
+//                                       // if ($date == $startDate) {
+//                                       // echo "Starts on: " . $startDate->format('jS F Y') . "\n";
+//                                       // }
+
+//                                       // If this is the last month, also show the end day
+//                                       $nextMonth = clone $date;
+//                                       $nextMonth->add($interval);
+
+//                                       // if ($nextMonth > $endDate) {
+//                                       // echo "Ends on: " . $endDate->format('jS F Y') . "\n";
+//                                       // } -->
+
+//                                       <!-- echo "\n"; -->
+//                                       <?php
+//                                   endforeach
+//                                   ?>

@@ -14,11 +14,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     validate_required($data, 'email', $errors);
     validate_email($data, 'email', $errors);
-    validate_unique($data, 'email', 'users', 'email', $pdo, $errors);
+    validate_unique($data, 'email', 'pr_users', 'email', $pdo, $errors);
 
     validate_required($data, 'mobile', $errors);
     validate_numeric($data, 'mobile', $errors);
-    validate_unique($data, 'mobile', 'users', 'mobile', $pdo, $errors);
+    validate_unique($data, 'mobile', 'pr_users', 'mobile', $pdo, $errors);
 
     validate_required($data, 'password', $errors);
     validate_min($data, 'password', 8, $errors);
@@ -34,7 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $data['password'] = password_hash($data['password'], PASSWORD_BCRYPT);
 
         $stmt = $pdo->prepare("
-            INSERT INTO users (user_name, email, mobile, password, role_id, status, created_at)
+            INSERT INTO pr_users (user_name, email, mobile, password, role_id, status, created_at)
             VALUES (:user_name, :email, :mobile, :password, :role_id, 'active', NOW())
         ");
         $stmt->execute([
@@ -58,7 +58,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $pdo->prepare("INSERT INTO user_details (user_id, created_at) VALUES (?, NOW())")
             ->execute([$userId]);
 
-        session_set('auth', $user);
+        $authstmt = $pdo->prepare("SELECT pr_users.password, pr_users.user_name, pr_users.id, pr_users.mobile, pr_users.role_id, roles.role_name FROM pr_users LEFT JOIN roles ON pr_users.role_id = roles.id WHERE pr_users.id = :id LIMIT 1  ");
+        $authstmt->execute(['id' => $user['id']]);
+        $authUser = $authstmt->fetch(PDO::FETCH_ASSOC);
+
+        session_set('auth', $authUser);
 
         send_json_success('Registration successful', $user);
     } catch (PDOException $e) {

@@ -16,13 +16,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
         $pdo = db_connection();
-        $stmt = $pdo->prepare("SELECT * FROM schemes WHERE id = :id LIMIT 1");
+        $stmt = $pdo->prepare("SELECT * FROM pr_schemes WHERE id = :id LIMIT 1");
         $stmt->execute(['id' => $data['id']]);
         $scheme = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($scheme) {
             $newStatus = ($scheme['scheme_status'] === 'active') ? 'inactive' : 'active';
-            $updateStmt = $pdo->prepare("UPDATE schemes SET scheme_status = :status WHERE id = :id");
+            $updateStmt = $pdo->prepare("UPDATE pr_schemes SET scheme_status = :status WHERE id = :id");
             $updateStmt->execute([
                 'status' => $newStatus,
                 'id' => $data['id']
