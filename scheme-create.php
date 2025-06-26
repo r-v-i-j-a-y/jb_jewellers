@@ -10,7 +10,14 @@ $authUserId = $authData['id'];
 <html>
 <?php
 $pageTitle = 'Dashboard';
-include './common/head.php'; ?>
+include './common/head.php';
+
+$topbarTitle = 'Create Scheme';
+$breadcrumbs = [
+    ['title' => 'Home', 'url' => 'index.php'],
+    ['title' => 'Schemes', 'url' => 'schemes.php'],
+    ['title' => 'Create Scheme', 'url' => '']
+]; ?>
 
 <body ng-app="myApp" ng-controller="MyController as jb" class="bg-light">
     <div>
@@ -68,7 +75,8 @@ include './common/head.php'; ?>
                         <div class="text-end mt-4">
                             <button type="button" class="btn btn-primary"
                                 onclick="schemeCreate(event, 'schemeCreateForm')">
-                                Create
+                                <span class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
+                                <span class="" role="status">Create</span>
                             </button>
                         </div>
                     </form>

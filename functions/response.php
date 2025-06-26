@@ -17,7 +17,7 @@ function send_json_success($message = 'Success', $data = [], int $statusCode = 2
     ], $statusCode);
 }
 
-function send_json_error($message = 'Something went wrong', $errors = [], int $statusCode = 400)
+function send_json_error($message = 'Something went wrong', $errors = [], int $statusCode = 200)
 {
     send_json([
         'status' => 'failed',

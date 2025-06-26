@@ -6,13 +6,35 @@ require './config/db.php';
 $authData = auth_protect();
 $authUserId = $authData['id'];
 
+
+$schmeSql = "SELECT sm.id,
+                    sm.scheme_name,
+                    sm.scheme_tenure
+                FROM pr_schemes as sm
+                WHERE sm.id = :scheme_id
+    ";
+$pdo = db_connection();
+$stmt2 = $pdo->prepare($schmeSql);
+$stmt2->execute(['scheme_id' => $_GET['scheme_id']]);
+$schemeData = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+
 ?>
 
 <!DOCTYPE html>
 <html>
 <?php
 $pageTitle = 'Dashboard';
-include './common/head.php'; ?>
+include './common/head.php';
+
+$scheme_id = $_GET['scheme_id'];
+$topbarTitle = 'Create Chit';
+$breadcrumbs = [
+    ['title' => 'Home', 'url' => 'index.php'],
+    ['title' => 'Schemes', 'url' => 'schemes.php'],
+    ['title' => $schemeData[0]['scheme_name'], 'url' => "chits.php?scheme_id=$scheme_id"],
+    ['title' => 'Create Chit', 'url' => '']
+];
+?>
 
 <body ng-app="myApp" ng-controller="MyController as jb" class="bg-light">
     <div>
@@ -68,9 +90,9 @@ include './common/head.php'; ?>
 
                         <!-- Submit Button -->
                         <div class="text-end mt-4">
-                            <button type="button" class="btn btn-warning"
-                                onclick="chitCreate(event, 'chitCreateForm')">
-                                Create
+                            <button type="button" class="btn btn-warning" onclick="chitCreate(event, 'chitCreateForm')">
+                                <span class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
+                                <span class="" role="status">Create</span>
                             </button>
                         </div>
                     </form>

@@ -55,10 +55,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             'status' => 'active'
         ];
 
-        $pdo->prepare("INSERT INTO user_details (user_id, created_at) VALUES (?, NOW())")
+        $pdo->prepare("INSERT INTO pr_user_details (user_id, created_at) VALUES (?, NOW())")
             ->execute([$userId]);
 
-        $authstmt = $pdo->prepare("SELECT pr_users.password, pr_users.user_name, pr_users.id, pr_users.mobile, pr_users.role_id, roles.role_name FROM pr_users LEFT JOIN roles ON pr_users.role_id = roles.id WHERE pr_users.id = :id LIMIT 1  ");
+        $authstmt = $pdo->prepare("SELECT pr_users.password, pr_users.user_name, pr_users.id, pr_users.mobile, pr_users.role_id, pr_roles.role_name FROM pr_users LEFT JOIN pr_roles ON pr_users.role_id = pr_roles.id WHERE pr_users.id = :id LIMIT 1  ");
         $authstmt->execute(['id' => $user['id']]);
         $authUser = $authstmt->fetch(PDO::FETCH_ASSOC);
 

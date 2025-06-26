@@ -8,15 +8,13 @@ $adminNavList = [
             ['link' => 'pay-scheme.php', 'linkName' => 'pay scheme'],
             ['link' => 'view-users.php', 'linkName' => 'view users'],
             ['link' => 'schemes.php', 'linkName' => 'schemes'],
-            ['link' => 'chit-details.php', 'linkName' => 'chit details'],
+            // ['link' => 'chit-details.php', 'linkName' => 'chit details'],
         ]
     ],
     [
         'title' => 'transaction details.php',
         'list' => [
             ['link' => 'month-wise-payment.php', 'linkName' => 'month wise payment'],
-            ['link' => 'chit-wise-payment.php', 'linkName' => 'chit wise payment'],
-            ['link' => 'pending-payment.php', 'linkName' => 'pending payment'],
             ['link' => 'change-status.php', 'linkName' => 'change status'],
             ['link' => 'close-scheme.php', 'linkName' => 'close scheme'],
         ]
@@ -31,8 +29,8 @@ $userNavList = [
             ['link' => "user-details.php", 'linkName' => 'Personal Details'],
             ['link' => 'purchase-scheme.php', 'linkName' => 'Purchase schemes'],
              ['link' => 'pay-scheme.php', 'linkName' => 'pay scheme'],
-            ['link' => 'payment-history.php', 'linkName' => 'View Payment History'],
-            ['link' => 'chit-details.php', 'linkName' => 'chit details'],
+            ['link' => 'payment-history.php', 'linkName' => 'Payment History'],
+            // ['link' => 'chit-details.php', 'linkName' => 'chit details'],
         ]
     ],
     

@@ -31,7 +31,14 @@ $schemeData = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <html>
 <?php
 $pageTitle = 'Dashboard';
-include './common/head.php'; ?>
+include './common/head.php';
+
+$topbarTitle = 'Scheme List';
+$breadcrumbs = [
+    ['title' => 'Home', 'url' => 'index.php'],
+    ['title' => 'Purchase Schemes', 'url' => '']
+];
+?>
 
 <body ng-app="myApp" ng-controller="MyController as jb" class="bg-light">
     <div ng-init="jb.commonInit()">
@@ -49,8 +56,8 @@ include './common/head.php'; ?>
                 <div class="container py-5">
                     <div class="row g-4">
                         <!-- Card 1 -->
-                 
-                        
+
+
                         <?php foreach ($schemeData as $scheme): ?>
                             <?php $jsonScheme = htmlspecialchars(json_encode($scheme), ENT_QUOTES, 'UTF-8'); ?>
                             <div class="col-md-6 col-lg-4">

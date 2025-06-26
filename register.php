@@ -48,11 +48,13 @@ include './common/head.php'; ?>
                                             placeholder="Mobile Number" autocomplete="mobile">
                                         <p class="m-1 text-danger error-message"></p>
                                     </div>
-                                    <div class="mb-3">
+                                    <div class="mb-3 position-relative">
                                         <input type="password" name="password" class="form-control rounded-pill"
                                             placeholder="Password" onkeypress="return event.charCode != 32"
                                             autocomplete="off">
                                         <p class="m-1 text-danger error-message"></p>
+                                        <i class="fas fa-eye-slash fa-lg text-primary cursor-pointer position-absolute toggle-password top-50"
+                                            onclick="showPassword(event)"></i>
                                     </div>
                                     <div class="mb-3">
                                         <input type="password" name="password_confirmation"
@@ -63,7 +65,10 @@ include './common/head.php'; ?>
 
 
                                     <button class="btn btn-primary w-100 rounded-pill mt-3"
-                                        onclick="registerSubmit(event,'registerForm')">Register</button>
+                                        onclick="registerSubmit(event,'registerForm')">
+                                        <span class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
+                                        <span class="" role="status">Register</span>
+                                    </button>
                                 </form>
 
                                 <p class="text-center mt-3 small">

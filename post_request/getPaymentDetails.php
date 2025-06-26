@@ -100,56 +100,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         return;
     }
 
+    $month = $date->format('F');
 
-    try {
-        $sql = "INSERT INTO pr_payments
-                (user_id,
-                user_chit_id,
-                chit_month,
-                chit_year,
-                amount,
-                transaction_date,
-                payment_id,
-                payment_method,
-                payment_status,
-                created_at,
-                updated_at,
-                payment_created_by,
-                payment_updated_by)
-                VALUES 
-                (:user_id,
-                :user_chit_id,
-                :chit_month,
-                :chit_year,
-                :amount,
-                NOW(),
-                :payment_id,
-                :payment_method,
-                :payment_status,
-                NOW(),
-                NOW(),
-                :payment_created_by,
-                :payment_updated_by)
 
-            ";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([
-            "user_id" => $user_id,
-            "user_chit_id" => $chit_id,
-            "chit_month" => $month,
-            "chit_year" => $year,
-            "amount" => $amount,
-            "payment_id" => 10,
-            "payment_method" => "upi",
-            "payment_status" => "success",
-            "payment_created_by" => $authUserId,
-            "payment_updated_by" => $authUserId
-        ]);
-
-        send_json_success("Paid successfully");
-    } catch (PDOException $e) {
-        send_json_error('Database error occurred.', ['database' => [$e->getMessage()]], 500);
-    }
+    send_json_success("success", ["month" => $month, "year" => $year]);
 
 
 } else {

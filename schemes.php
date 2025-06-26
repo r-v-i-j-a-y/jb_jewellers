@@ -25,6 +25,9 @@ $pdo = db_connection();
 $stmt = $pdo->prepare($sql);
 $stmt->execute();
 $schemeData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+
+
 ?>
 
 <!DOCTYPE html>
@@ -32,7 +35,13 @@ $schemeData = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <?php
 $pageTitle = 'Dashboard';
-include './common/head.php'; ?>
+include './common/head.php';
+$topbarTitle = 'Scheme List';
+$breadcrumbs = [
+    ['title' => 'Home', 'url' => 'index.php'],
+    ['title' => 'Schemes', 'url' => '']
+];
+?>
 
 <body ng-app="myApp" ng-controller="MyController as jb" class="bg-light">
     <div>
@@ -101,7 +110,7 @@ include './common/head.php'; ?>
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="schemeStatusModalLabel">Modal title</h1>
+                                <h1 class="modal-title fs-5" id="schemeStatusModalLabel">Confirm to Change </h1>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
@@ -111,8 +120,10 @@ include './common/head.php'; ?>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                                     onclick="schemeStatusChangeModalClose()">Close</button>
-                                <button type="button" class="btn btn-primary" onclick="confirmStatusChange()">Yes,
-                                    Change</button>
+                                <button type="button" class="btn btn-primary" onclick="confirmStatusChange(event)">
+                                    <span class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
+                                    <span class="" role="status">Yes, Change</span>
+                                </button>
                             </div>
                         </div>
                     </div>

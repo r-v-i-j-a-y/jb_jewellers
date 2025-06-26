@@ -31,7 +31,13 @@ $schemeData = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <html>
 <?php
 $pageTitle = 'Dashboard';
-include './common/head.php'; ?>
+include './common/head.php';
+$topbarTitle = 'Dashboard';
+$breadcrumbs = [
+    ['title' => 'Home', 'url' => '']
+];
+
+?>
 
 <body ng-app="myApp" ng-controller="MyController as jb" class="bg-light">
     <div ng-init="jb.commonInit()">
@@ -47,7 +53,7 @@ include './common/head.php'; ?>
             <div class="content-scrollable card border-0">
 
                 <div class="container py-5">
-              
+
                 </div>
             </div>
         </div>

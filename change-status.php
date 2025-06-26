@@ -6,6 +6,8 @@ require './config/db.php';
 $authData = auth_protect();
 $authUserId = $authData['id'];
 
+$chit_status = isset($_GET['chit_status']) ? $_GET['chit_status'] : null;
+
 
 $sql = "SELECT 
         uc.id,
@@ -33,10 +35,14 @@ $sql = "SELECT
         LEFT JOIN pr_schemes as sm ON sm.id = uc.chit_scheme_id
         LEFT JOIN pr_users as ur ON ur.id = uc.userid
     ";
-
+$params = null;
+if (!empty($chit_status)) {
+    $sql .= "WHERE uc.status = :chit_status";
+    $params['chit_status'] = $chit_status;
+}
 $pdo = db_connection();
 $stmt = $pdo->prepare($sql);
-$stmt->execute();
+$stmt->execute($params);
 $chitStatus = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
@@ -45,7 +51,13 @@ $chitStatus = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <html>
 <?php
 $pageTitle = 'Dashboard';
-include './common/head.php'; ?>
+include './common/head.php';
+$topbarTitle = 'Change Status';
+$breadcrumbs = [
+    ['title' => 'Home', 'url' => 'index.php'],
+    ['title' => 'Change Status', 'url' => '']
+];
+?>
 
 <body ng-app="myApp" ng-controller="MyController as jb" class="bg-light">
     <div>
@@ -56,7 +68,30 @@ include './common/head.php'; ?>
         <div class="main-container">
             <!-- Fixed Topbar -->
             <?php include './common/topBar.php'; ?>
-
+            <div class="mt-4 p-0">
+                <div class="card p-4 ">
+                    <!-- <h5 class="text-muted">Filters</h5> -->
+                    <div class="d-flex flex-wrap  gap-3 justify-content-center">
+                        <div class="d-flex flex-column">
+                            <label for="" class="small text-muted ms-1">Chit Status</label>
+                            <select onchange="changeStatusFilter()" class="selectpicker " name="" id="chitStatusFilter">
+                                <option value="">Select Chit Status</option>
+                                <option <?= $chit_status == 'pending' ? 'selected="selected"' : '' ?> value="pending">
+                                    Pending</option>
+                                <option <?= $chit_status == 'approved' ? 'selected="selected"' : '' ?> value="approved">
+                                    Approved</option>
+                                <option <?= $chit_status == 'rejected' ? 'selected="selected"' : '' ?> value="rejected">
+                                    Rejected
+                                </option>
+                                <option <?= $chit_status == 'closed' ? 'selected="selected"' : '' ?> value="closed">Closed
+                                <option <?= $chit_status == 'discontinued' ? 'selected="selected"' : '' ?>
+                                    value="discontinued">Discontinued
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <!-- Scrollable Content -->
             <div class="content-scrollable card border-0">
 
@@ -91,11 +126,16 @@ include './common/head.php'; ?>
                                     <td>
                                         <select class="form-select" onchange="chitStatusChange(<?= $chit['id'] ?>)" name=""
                                             id="chitStatus<?= $chit['id'] ?>">
-                                            <option value="pending">Pending</option>
-                                            <option value="approved">Approved</option>
-                                            <option value="rejected">Rejected</option>
-                                            <option value="closed">Closed</option>
-                                            <option value="discontinued">Discontinued</option>
+                                            <option <?= $chit['status'] == 'pending' ? 'selected' : '' ?> value="pending">
+                                                Pending</option>
+                                            <option <?= $chit['status'] == 'approved' ? 'selected' : '' ?> value="approved">
+                                                Approved</option>
+                                            <option <?= $chit['status'] == 'rejected' ? 'selected' : '' ?> value="rejected">
+                                                Rejected</option>
+                                            <option <?= $chit['status'] == 'closed' ? 'selected' : '' ?> value="closed">Closed
+                                            </option>
+                                            <option <?= $chit['status'] == 'pending' ? 'discontinued' : '' ?>
+                                                value="discontinued">Discontinued</option>
                                         </select>
                                     </td>
                                 <?php endforeach ?>
@@ -111,7 +151,7 @@ include './common/head.php'; ?>
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="chaneStatusModalLabel">Modal title</h1>
+                    <h1 class="modal-title fs-5" id="chaneStatusModalLabel">Confirm to Change</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -120,8 +160,10 @@ include './common/head.php'; ?>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" onclick="confirmChangeStatusClose()"
                         data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" onclick="confirmChangeStatus()">Yes,
-                        Change</button>
+                    <button type="button" class="btn btn-primary" onclick="confirmChangeStatus(event)">
+                        <span class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
+                        <span class="" role="status">Yes, Change</span>
+                    </button>
                 </div>
             </div>
         </div>

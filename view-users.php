@@ -47,7 +47,17 @@ $userData = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <html>
 <?php
 $pageTitle = 'Dashboard';
-include './common/head.php'; ?>
+include './common/head.php';
+$pageTitle = 'Users List';
+include './common/head.php';
+
+$topbarTitle = 'Users List';
+$breadcrumbs = [
+    ['title' => 'Home', 'url' => 'index.php'],
+    ['title' => 'View Users', 'url' => '']
+];
+
+?>
 
 <body ng-app="myApp" ng-controller="MyController as jb" class="bg-light">
     <div>

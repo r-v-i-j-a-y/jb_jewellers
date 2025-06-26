@@ -48,13 +48,33 @@ $stmt1 = $pdo->prepare($usersql);
 $stmt1->execute();
 $userData = $stmt1->fetchAll(PDO::FETCH_ASSOC);
 
+
+$schmeSql = "SELECT sm.id,
+                    sm.scheme_name,
+                    sm.scheme_tenure
+                FROM pr_schemes as sm
+                WHERE sm.id = :scheme_id
+    ";
+$pdo = db_connection();
+$stmt2 = $pdo->prepare($schmeSql);
+$stmt2->execute(['scheme_id' => $_GET['scheme_id']]);
+$schemeData = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+
 ?>
 
 <!DOCTYPE html>
 <html>
 <?php
 $pageTitle = 'Dashboard';
-include './common/head.php'; ?>
+include './common/head.php';
+
+$topbarTitle = 'Chit List';
+$breadcrumbs = [
+    ['title' => 'Home', 'url' => 'index.php'],
+    ['title' => 'Schemes', 'url' => 'schemes.php'],
+    ['title' => 'Purchase Chit', 'url' => '']
+];
+?>
 
 <body ng-app="myApp" ng-controller="MyController as jb" class="bg-light">
     <div>
@@ -71,15 +91,21 @@ include './common/head.php'; ?>
 
                 <div class="container py-5">
                     <div class="row g-4">
+                        <h4 class="text-muted m-0">Scheme - <?= $schemeData[0]['scheme_name'] ?></h4>
+                        <h6 class="text-muted m-0">Duration - <?= $schemeData[0]['scheme_tenure'] ?> Months</h6>
                         <!-- Card 1 -->
-                        <div
-                            class="d-flex justify-content-end">
+                        <div class="d-flex justify-content-end">
 
                             <a class="btn btn-warning rounded-pill"
                                 href="chit-create.php?scheme_id=<?php echo $_GET['scheme_id'] ?>">Add Chit</a>
                         </div>
                         <!-- <input hidden type="text" id="user_id" name="user_id" class="form-control p-2"
                                 ng-model="jb.selectUserDetilas.id"> -->
+                        <?php if (empty($chitData)): ?>
+                            <div class="d-flex flex-column align-items-center justify-content-center">
+                                <img src="assets/images/comming_soon.jpg" alt="" class="w-50 h-100">
+                            </div>
+                        <?php endif ?>
                         <?php foreach ($chitData as $chit): ?>
                             <?php $jsonChit = htmlspecialchars(json_encode($chit), ENT_QUOTES, 'UTF-8'); ?>
                             <div class="col-md-6 col-lg-4">
@@ -97,20 +123,20 @@ include './common/head.php'; ?>
                                             <span
                                                 class="badge bg-light border <?= $chit['status'] == "active" ? "text-success" : "text-danger" ?>"><?= $chit['status'] ?></span>
                                         </div>
-                                            <div class="d-flex justify-content-between">
-                                                <div class="form-check form-switch d-flex align-items-center mt-2">
-                                                    <input class="form-check-input me-2" type="checkbox"
-                                                        id="chitStatusSwitch<?= $chit['id'] ?>"
-                                                        onclick="chitStatusChangeModal(<?= $jsonChit ?>)" role="switch"
-                                                        <?= $chit['status'] == "active" ? "checked" : "" ?>>
-                                                    <label
-                                                        class="form-check-label fw-bold <?= $chit['status'] == "active" ? "text-success" : "text-danger" ?>"
-                                                        for="chitStatusSwitch">
-                                                        <?= $chit['status'] == "active" ? "Active" : "Inactive" ?>
+                                        <div class="d-flex justify-content-between">
+                                            <div class="form-check form-switch d-flex align-items-center mt-2">
+                                                <input class="form-check-input me-2" type="checkbox"
+                                                    id="chitStatusSwitch<?= $chit['id'] ?>"
+                                                    onclick="chitStatusChangeModal(<?= $jsonChit ?>)" role="switch"
+                                                    <?= $chit['status'] == "active" ? "checked" : "" ?>>
+                                                <label
+                                                    class="form-check-label fw-bold <?= $chit['status'] == "active" ? "text-success" : "text-danger" ?>"
+                                                    for="chitStatusSwitch">
+                                                    <?= $chit['status'] == "active" ? "Active" : "Inactive" ?>
 
-                                                    </label>
-                                                </div>
+                                                </label>
                                             </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -125,7 +151,7 @@ include './common/head.php'; ?>
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="chitStatusModalLabel">Modal title</h1>
+                                <h1 class="modal-title fs-5" id="chitStatusModalLabel">Confirm to Change</h1>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
@@ -135,13 +161,16 @@ include './common/head.php'; ?>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                                     onclick="chitStatusChangeModalClose()">Close</button>
-                                <button type="button" class="btn btn-primary" onclick="confirmChitStatusChange()">Yes,
-                                    Change</button>
+                                <button type="button" class="btn btn-primary" onclick="confirmChitStatusChange(event)">
+                                    <span class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
+                                    <span class="" role="status">Yes, Change</span>
+
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="modal fade" id="chitPurchaseModal" tabindex="-1" aria-labelledby="chitPurchaseModalLabel"
+                <!-- <div class="modal fade" id="chitPurchaseModal" tabindex="-1" aria-labelledby="chitPurchaseModalLabel"
                     aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -160,7 +189,7 @@ include './common/head.php'; ?>
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
 
             </div>
         </div>

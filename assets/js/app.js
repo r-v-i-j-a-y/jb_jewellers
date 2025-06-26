@@ -40,8 +40,13 @@ const ToastService = {
 const nonEmptyRegex = /^(?!\s*$).+$/;
 const phoneRegex = /^\+?[1-9][0-9]{7,14}$/;
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-// const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
-const passwordRegex = /^\+?[1-9][0-9]{7,15}$/;
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+// const pinCodeRegex = /^[A-Za-z0-9\- ]{3,10}$/;
+const pinCodeRegex = /^[0-9]{4,6}$/;
+const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+const aadhaarRegex = /^[2-9]{1}[0-9]{11}$/;
+
+// const passwordRegex = /^\+?[1-9][0-9]{7,15}$/;
 // var $rootScope = angular.element(document.body).injector().get("$rootScope");
 
 //  Validation rules
@@ -70,14 +75,14 @@ const validationRules = {
   city: { regex: nonEmptyRegex, message: "City cannot be empty" },
   state: { regex: nonEmptyRegex, message: "State cannot be empty" },
   state: { regex: nonEmptyRegex, message: "State cannot be empty" },
-  pincode: { regex: nonEmptyRegex, message: "Pincode cannot be empty" },
+  pincode: { regex: pinCodeRegex, message: "Enter proper Pincode" },
   pan_number: {
-    regex: nonEmptyRegex,
-    message: "Pan Number cannot be empty",
+    regex: panRegex,
+    message: "Enter a valid PAN number (e.g. ABCDE1234F)",
   },
   aadhaar_number: {
-    regex: nonEmptyRegex,
-    message: "Nominee cannot be empty",
+    regex: aadhaarRegex,
+    message: "Enter a valid 12-digit Aadhaar number",
   },
   nominee_relation: {
     regex: nonEmptyRegex,
@@ -197,7 +202,65 @@ function form_validation(formId) {
 
   return isValid;
 }
+/********************* Mobile number type validation ********************/
+function mobileNumberType(e) {
+  const allowedKeys = ["Backspace", "ArrowLeft", "ArrowRight", "Delete", "Tab"];
+  const value = e.target.value;
+  const key = e.key;
 
+  // Allow control keys
+  if (allowedKeys.includes(key)) return;
+
+  // Prevent any non-digit and non-'+' key
+  if (!/[\d+]/.test(key)) {
+    e.preventDefault();
+    return;
+  }
+
+  // Prevent more than one '+' or '+' not at the start
+  if (key === "+") {
+    if (value.includes("+") || input.selectionStart !== 0) {
+      e.preventDefault();
+      return;
+    }
+  }
+
+  // Count digits (exclude '+')
+  const digitsOnly = value.replace(/\D/g, "");
+  if (digitsOnly.length >= 15 && /\d/.test(key)) {
+    e.preventDefault(); // stop further input
+  }
+}
+
+/**************************** Is number only ***************************/
+
+function isNumberKey(event) {
+  const charCode = event.which ? event.which : event.keyCode;
+
+  // Allow only number keys (0-9)
+  if (charCode < 48 || charCode > 57) {
+    return false;
+  }
+
+  return true;
+}
+/**************************** Is String only ***************************/
+
+function isLetterKey(event) {
+  const charCode = event.which ? event.which : event.keyCode;
+
+  // A–Z (uppercase) = 65–90
+  // a–z (lowercase) = 97–122
+  if (
+    (charCode >= 65 && charCode <= 90) || // A–Z
+    (charCode >= 97 && charCode <= 122) ||
+    charCode === 32 // a–z
+  ) {
+    return true;
+  }
+
+  return false; // Block anything else (digits, space, etc.)
+}
 /************************* Validate Here And Error *****************************************/
 
 function validateInput(input) {
@@ -302,7 +365,7 @@ function loginSubmit(event, formId) {
   if (!validate_status) {
     return;
   }
-
+  button_loader(event);
   $.ajax({
     type: "POST",
     url: "post_request/loginRequest.php",
@@ -316,6 +379,7 @@ function loginSubmit(event, formId) {
       } else {
         ToastService.error("Error", response.errors);
       }
+      button_loader(event);
     },
   });
 }
@@ -332,7 +396,7 @@ function registerSubmit(event, formId) {
   if (!validate_status) {
     return;
   }
-
+  button_loader(event);
   $.ajax({
     type: "POST",
     url: "post_request/registerRequest.php",
@@ -348,6 +412,7 @@ function registerSubmit(event, formId) {
         let firstErrorMessage = errors[firstKey][0];
         ToastService.error("Error", firstErrorMessage);
       }
+      button_loader(event);
     },
   });
 }
@@ -363,7 +428,7 @@ function userDetailsUpdate(event, formId) {
   if (!validate_status) {
     return;
   }
-
+  button_loader(event);
   $.ajax({
     type: "POST",
     url: "post_request/userDetailsRequest.php",
@@ -379,6 +444,7 @@ function userDetailsUpdate(event, formId) {
         let firstErrorMessage = errors[firstKey][0];
         ToastService.error("Error", firstErrorMessage);
       }
+      button_loader(event);
     },
   });
 }
@@ -392,7 +458,7 @@ async function schemeCreate(event, formId) {
   if (!validate_status) {
     return;
   }
-
+  button_loader(event);
   await $.ajax({
     type: "POST",
     url: "post_request/schemeCreateRequest.php",
@@ -407,6 +473,7 @@ async function schemeCreate(event, formId) {
       } else {
         ToastService.error("Error", message);
       }
+      button_loader(event);
     },
   });
 }
@@ -427,7 +494,9 @@ schemeStatusChangeModalClose = () => {
   }
 };
 
-async function confirmStatusChange() {
+async function confirmStatusChange(event) {
+  button_loader(event);
+
   await $.ajax({
     type: "POST",
     url: "post_request/schemeRequest.php",
@@ -451,6 +520,7 @@ async function confirmStatusChange() {
       } else {
         ToastService.error("Error", message);
       }
+      button_loader(event);
     },
   });
 }
@@ -465,6 +535,7 @@ chitCreate = async (event, formId) => {
   if (!validate_status) {
     return;
   }
+  button_loader(event);
 
   await $.ajax({
     type: "POST",
@@ -482,6 +553,7 @@ chitCreate = async (event, formId) => {
         // let firstErrorMessage = errors[firstKey][0];
         ToastService.error("Error", message);
       }
+      button_loader(event);
     },
   });
 };
@@ -504,6 +576,8 @@ function chitStatusChangeModalClose() {
 }
 
 async function confirmChitStatusChange() {
+  button_loader(event);
+
   await $.ajax({
     type: "POST",
     url: "post_request/chitRequest.php",
@@ -523,6 +597,7 @@ async function confirmChitStatusChange() {
       } else {
         ToastService.error("Error", message);
       }
+      button_loader(event);
     },
   });
 }
@@ -546,7 +621,8 @@ function purchaseChitModal(chitId, schemeId, chitNumber) {
   modal.show();
 }
 
-async function confirmChitPurchase() {
+async function confirmChitPurchase(event) {
+  button_loader(event);
   await $.ajax({
     type: "POST",
     url: "post_request/chitPurchase.php",
@@ -569,6 +645,7 @@ async function confirmChitPurchase() {
       } else {
         ToastService.error("Error", message);
       }
+      button_loader(event);
     },
   });
 }
@@ -587,7 +664,9 @@ async function chitStatusChange(id) {
   modal.show();
 }
 
-async function confirmChangeStatus() {
+async function confirmChangeStatus(event) {
+  button_loader(event);
+
   await $.ajax({
     type: "POST",
     url: "post_request/changeStatus.php",
@@ -605,6 +684,7 @@ async function confirmChangeStatus() {
       } else {
         ToastService.error("Error", message);
       }
+      button_loader(event);
     },
   });
 }
@@ -614,18 +694,65 @@ function confirmChangeStatusClose() {
 }
 
 /**************************** Pay Chit ***************************/
-function payChitModal(id, amount) {
-  debugger;
+
+let user_id = null;
+function paySchemeUserSelect() {
+  user_id = $("#selectPayUserId").val();
+  window.location = `pay-scheme.php?user_id=${user_id}`;
+}
+
+async function payChitModal(event, id, amount, scheme, chit_number) {
   const modal = bootstrap.Modal.getOrCreateInstance($("#payChitModal")[0]);
-  modal.show();
+  // let details = `
+  // <p>${}</p>
+  // `;
+
+  user_id = $("#selectPayUserId").val();
 
   data = {
     chit_id: id,
     amount,
+    user_id,
   };
+  button_loader(event);
+
+  await $.ajax({
+    type: "POST",
+    url: "post_request/getPaymentDetails.php",
+    data,
+    success: function (response) {
+      const { status, message, errors, data } = response;
+      if (status == "success") {
+        const modal = bootstrap.Modal.getOrCreateInstance(
+          $("#payChitModal")[0]
+        );
+        modal.show();
+        let details = `
+        <h4 calss="text-center">Are you sure to pay</h4>
+        <div calss=>
+        <p>Scheme - ${scheme}</p>
+        <p>Chit Number - ${chit_number}</p>
+        <p>Month - ${data["month"]}</p>
+        <p>Year - ${data["year"]}</p>
+        <p>Amount - ${amount} ₹</p>
+        </div>
+        `;
+        $("#paymentModalContent").html(details);
+      } else {
+        // const modal = bootstrap.Modal.getOrCreateInstance(
+        //   $("#payChitModal")[0]
+        // );
+        // modal.hide();
+        ToastService.error("Error", message);
+      }
+      button_loader(event);
+    },
+  });
 }
 
-async function confirmChitPayment() {
+async function confirmChitPayment(event) {
+  button_loader(event);
+
   await $.ajax({
     type: "POST",
     url: "post_request/chitPaymentRequest.php",
@@ -636,13 +763,18 @@ async function confirmChitPayment() {
         ToastService.success("Success", message);
 
         const modal = bootstrap.Modal.getOrCreateInstance(
-          $("#chaneStatusModal")[0]
+          $("#payChitModal")[0]
         );
         modal.hide();
         window.location.reload();
       } else {
+        const modal = bootstrap.Modal.getOrCreateInstance(
+          $("#payChitModal")[0]
+        );
+        modal.hide();
         ToastService.error("Error", message);
       }
+      button_loader(event);
     },
   });
 }
@@ -678,11 +810,122 @@ new DataTable("#statusTable", {
   ],
 });
 
-/*********************** Pay scheme user select **********************/
-function paySchemeUserSelect() {
-  let user_id = $("#selectUserId").val();
-  window.location = `pay-scheme.php?user_id=${user_id}`;
+/************************ Select picker ***************/
+$(".selectpicker").selectpicker();
+
+/************************** Transaction filter ***************/
+function transactionFilter() {
+  let today = new Date();
+
+  let year = today.getFullYear();
+  let month = String(today.getMonth() + 1).padStart(2, "0"); // Month is 0-based
+  let day = String(today.getDate()).padStart(2, "0");
+
+  let formattedDate = `${year}-${month}-${day}`;
+
+  let schemeFilter = $("#schemeFilter").val();
+  let chitFilter = $("#chitFilter").val();
+  let userFilter = $("#userFilter").val();
+  let paymentStatusFilter = $("#paymentStatusFilter").val();
+  let chitStatusFilter = $("#chitStatusFilter").val();
+  let startDate = $("#startDate").val();
+  let endDate = $("#endDate").val();
+
+  let params = "";
+  if (schemeFilter) {
+    params +=
+      params == "" ? `scheme_id=${schemeFilter}` : `&scheme_id=${schemeFilter}`;
+  }
+  if (chitFilter) {
+    params +=
+      params == "" ? `chit_amount=${chitFilter}` : `&chit_amount=${chitFilter}`;
+  }
+  if (userFilter) {
+    params += params == "" ? `user_id=${userFilter}` : `&user_id=${userFilter}`;
+  }
+  if (paymentStatusFilter) {
+    params +=
+      params == ""
+        ? `pay_status=${paymentStatusFilter}`
+        : `&pay_status=${paymentStatusFilter}`;
+  }
+  if (chitStatusFilter) {
+    params +=
+      params == ""
+        ? `chit_status=${chitStatusFilter}`
+        : `&chit_status=${chitStatusFilter}`;
+  }
+
+  if (!startDate && endDate) {
+    ToastService.warning("Error", "Select Start date");
+    return;
+  }
+  if (startDate && !endDate) {
+    ToastService.warning("Error", "Select End date");
+    return;
+  }
+  if (startDate && endDate) {
+    params += params == "" ? `start_at=${startDate}` : `&start_at=${startDate}`;
+    params += params == "" ? `end_at=${endDate}` : `&end_at=${endDate}`;
+  }
+
+  if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
+    ToastService.error("Error", "End date is earlier than start date.");
+  } else {
+    window.location = `month-wise-payment.php?${params}`;
+  }
 }
+
+/********************** Change status filter ***********************/
+function changeStatusFilter() {
+  let chitStatusFilter = $("#chitStatusFilter").val();
+  let params = "";
+
+  if (chitStatusFilter) {
+    params +=
+      params == ""
+        ? `chit_status=${chitStatusFilter}`
+        : `&chit_status=${chitStatusFilter}`;
+  }
+  window.location = `change-status.php?${params}`;
+}
+
+///////////////////// Button Loader Function
+function button_loader(event) {
+  if (event.target.nodeName == "BUTTON") {
+    loader_element = event.target;
+  } else {
+    loader_element = event.target.parentElement;
+  }
+
+  /////////////////////// Add loader in button
+  $loader_element = loader_element;
+  $loader_span_1 = loader_element.firstElementChild;
+  $loader_span_2 = loader_element.lastElementChild;
+
+  $loader_element.classList.toggle("disabled");
+  $loader_span_1.classList.toggle("d-none");
+  $loader_span_2.classList.toggle("d-none");
+}
+
+/******************** SHOW PASSWORD ******************/
+function showPassword(event) {
+  event.preventDefault();
+  let inputElement;
+  inputElement = event.target.previousElementSibling.previousElementSibling;
+  event.target.classList.toggle("fa-eye");
+  event.target.classList.toggle("fa-eye-slash");
+  inputElement.type = inputElement.type === "password" ? "text" : "password";
+}
+
+{
+  /* <button ng-click="photo.id_proof_delete($event)" class="btn btn-danger" type="button">
+                                <span class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
+                                <span class="" role="status">Delete</span>
+                            </button> */
+}
+
+/*********************** Pay scheme user select **********************/
 
 //  <?php
 //                                   // Create a DatePeriod to iterate through each month

@@ -36,22 +36,27 @@ include './common/head.php'; ?>
                                         <!-- <input type="email" name="email" class="form-control rounded-pill"
                                             placeholder="Email" required> -->
                                         <input type="text" name="mobile" id="mobile" class="form-control rounded-pill"
-                                            placeholder="Mobile">
+                                            placeholder="Mobile" onkeypress=mobileNumberType(event)>
                                         <p class="m-1 text-danger error-message"></p>
                                     </div>
-                                    <div class="mb-2">
-
+                                    <div class="mb-2 position-relative">
                                         <input type="password" name="password" id="password"
                                             class="form-control rounded-pill" placeholder="Password"
                                             onkeypress="return event.charCode != 32" autocomplete="off">
                                         <p class="m-1 text-danger error-message"></p>
+                                        <i class="fas fa-eye-slash fa-lg text-primary cursor-pointer position-absolute toggle-password top-50"
+                                            onclick="showPassword(event)"></i>
                                     </div>
+
                                     <div class="text-end mb-3">
                                         <a href="#" class="text-decoration-none small">Forgot password?</a>
                                     </div>
 
                                     <button class="btn btn-danger w-100 rounded-pill" type="submit"
-                                        onclick="loginSubmit(event,'loginForm')">Login</button>
+                                        onclick="loginSubmit(event,'loginForm')">
+                                        <span class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
+                                        <span class="" role="status">Login</span>
+                                    </button>
                                 </form>
 
                                 <p class="text-center mt-3 small">

@@ -5,6 +5,7 @@ require './config/db.php';
 
 $authData = auth_protect();
 $authUserId = $authData['id'];
+$isAdmin = ($authData['role_id'] == 1) ? true : false;
 
 
 $sql = "SELECT 
@@ -51,7 +52,25 @@ if ($authData['role_id'] == 2 && $authUserId != $_GET['id']) {
 <html>
 <?php
 $pageTitle = 'User Details';
-include './common/head.php'; ?>
+include './common/head.php';
+$topbarTitle = 'User Details Form';
+if ($isAdmin) {
+    $breadcrumbs = [
+        ['title' => 'Home', 'url' => 'index.php'],
+        ['title' => 'View Users', 'url' => 'view-users.php'],
+        ['title' => 'User Details', 'url' => '']
+    ];
+
+} else {
+
+    $breadcrumbs = [
+        ['title' => 'Home', 'url' => 'index.php'],
+        ['title' => 'Personal Details', 'url' => '']
+    ];
+}
+
+$nomineeRelationArry = ["mother", "father", "brother", "sister", "wife", "son", "daughter", "grand-father", "grand-mother", "aunty", "uncle", "friend"];
+?>
 
 <body class="bg-light">
     <div>
@@ -73,10 +92,10 @@ include './common/head.php'; ?>
                         </div>
                     <?php } else { ?>
                         <form id="userDetailsForm" class="card p-4 shadow form-section">
-                            <div class="mb-3">
+                            <!-- <div class="mb-3">
                                 <strong>User Role :</strong> &nbsp; | &nbsp;
                                 <strong>User ID:</strong>
-                            </div>
+                            </div> -->
 
                             <div class="row g-4">
                                 <input hidden type="text" id="user_id" name="user_id" class="form-control p-2"
@@ -84,28 +103,33 @@ include './common/head.php'; ?>
                                 <div class="col-md-6 col-lg-4">
                                     <label for="first_name">First Name</label>
                                     <input type="text" id="first_name" name="first_name" class="form-control p-2"
-                                        value="<?= isset($userDetails['first_name']) ? $userDetails['first_name'] : '' ?>">
+                                        value="<?= isset($userDetails['first_name']) ? $userDetails['first_name'] : '' ?>"
+                                        onkeypress="return isLetterKey(event)" onpaste="return isLetterKey(event)"
+                                        maxlength="12">
                                     <p class="text-danger error-message m-0"></p>
                                 </div>
 
                                 <div class="col-md-6 col-lg-4">
                                     <label for="last_name">Last Name</label>
                                     <input type="text" id="last_name" name="last_name" class="form-control p-2"
-                                        value="<?= isset($userDetails['last_name']) ? $userDetails['last_name'] : '' ?>">
+                                        value="<?= isset($userDetails['last_name']) ? $userDetails['last_name'] : '' ?>"
+                                        onkeypress="return isLetterKey(event)" onpaste="return isLetterKey(event)">
                                     <p class="text-danger error-message m-0"></p>
                                 </div>
 
                                 <div class="col-md-6 col-lg-4">
                                     <label for="dob">Date of Birth</label>
                                     <input type="date" id="dob" name="dob" class="form-control p-2"
-                                        value="<?= isset($userDetails['dob']) ? $userDetails['dob'] : '' ?>">
+                                        value="<?= isset($userDetails['dob']) ? $userDetails['dob'] : '' ?>"
+                                        max="<?php echo date('Y-m-d') ?>">
                                     <p class="text-danger error-message m-0"></p>
                                 </div>
 
                                 <div class="col-md-6 col-lg-4">
                                     <label for="anniversary">Anniversary</label>
                                     <input type="date" id="anniversary" name="anniversary" class="form-control p-2"
-                                        value="<?= isset($userDetails['anniversary']) ? $userDetails['anniversary'] : '' ?>">
+                                        value="<?= isset($userDetails['anniversary']) ? $userDetails['anniversary'] : '' ?>"
+                                        max="<?php echo date('Y-m-d') ?>">
                                     <p class="text-danger error-message m-0"></p>
                                 </div>
 
@@ -140,21 +164,26 @@ include './common/head.php'; ?>
                                 <div class="col-md-6 col-lg-4">
                                     <label for="pincode">Pincode</label>
                                     <input type="text" id="pincode" name="pincode" class="form-control p-2"
-                                        value="<?= isset($userDetails['pincode']) ? $userDetails['pincode'] : '' ?>">
+                                        value="<?= isset($userDetails['pincode']) ? $userDetails['pincode'] : '' ?>"
+                                        onkeypress="return isNumberKey(event)" onpaste="return isNumberKey(event)"
+                                        maxlength="6">
                                     <p class="text-danger error-message m-0"></p>
                                 </div>
 
                                 <div class="col-md-6 col-lg-4">
                                     <label for="pan_number">PAN Number</label>
                                     <input type="text" id="pan_number" name="pan_number" class="form-control p-2"
-                                        value="<?= isset($userDetails['pan_number']) ? $userDetails['pan_number'] : '' ?>">
+                                        value="<?= isset($userDetails['pan_number']) ? $userDetails['pan_number'] : '' ?>"
+                                        maxlength="10">
                                     <p class="text-danger error-message m-0"></p>
                                 </div>
 
                                 <div class="col-md-6 col-lg-4">
                                     <label for="aadhaar_number">Aadhaar Number</label>
                                     <input type="text" id="aadhaar_number" name="aadhaar_number" class="form-control p-2"
-                                        value="<?= isset($userDetails['aadhaar_number']) ? $userDetails['aadhaar_number'] : '' ?>">
+                                        value="<?= isset($userDetails['aadhaar_number']) ? $userDetails['aadhaar_number'] : '' ?>"
+                                        onkeypress="return isNumberKey(event)" onpaste="return isNumberKey(event)"
+                                        maxlength="12">
                                     <p class="text-danger error-message m-0"></p>
                                 </div>
 
@@ -167,9 +196,16 @@ include './common/head.php'; ?>
 
                                 <div class="col-md-6 col-lg-4">
                                     <label for="nominee_relation">Nominee Relation</label>
-                                    <input type="text" id="nominee_relation" name="nominee_relation"
+                                    <select class="form-select text-capitalize" name="nominee_relation" id="">
+                                        <option value="">Select Nominee Relation</option>
+                                        <?php foreach ($nomineeRelationArry as $nominee): ?>
+                                            <option <?= isset($userDetails['nominee_relation']) && $userDetails['nominee_relation'] == $nominee ? 'selected' : '' ?>
+                                                class="text-capitalize" value="<?= $nominee ?>"><?= $nominee ?></option>
+                                        <?php endforeach ?>
+                                    </select>
+                                    <!-- <input type="text" id="nominee_relation" name="nominee_relation"
                                         class="form-control p-2"
-                                        value="<?= isset($userDetails['nominee_relation']) ? $userDetails['nominee_relation'] : '' ?>">
+                                        value="<?= isset($userDetails['nominee_relation']) ? $userDetails['nominee_relation'] : '' ?>"> -->
                                     <p class="text-danger error-message m-0"></p>
                                 </div>
                             </div>
@@ -178,7 +214,8 @@ include './common/head.php'; ?>
                             <div class="text-end mt-4">
                                 <button type="button" class="btn btn-primary"
                                     onclick="userDetailsUpdate(event, 'userDetailsForm')">
-                                    Update
+                                    <span class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
+                                    <span class="" role="status">Update</span>
                                 </button>
                             </div>
                         </form>

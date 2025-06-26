@@ -58,7 +58,7 @@ $stmt->execute($params);
 $userChitData = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
-$paymentSql = "SELECT py.id, py.user_id, py.user_chit_id, py.chit_month, py.chit_year, py.amount, py.transaction_date, py.payment_id, py.payment_method, py.remarks, py.payment_status, py.created_at, py.payment_created_by, py.updated_at, py.payment_updated_by FROM pr_payments as py";
+$paymentSql = "SELECT py.id, py.user_id, py.user_chit_id, py.chit_month, py.chit_year, py.amount, py.transaction_date, py.payment_id, py.payment_method, py.remarks, py.payment_status, py.created_at, py.payment_created_by, py.updated_at, py.payment_updated_by FROM pr_payments as py WHERE py.payment_status = 'success'";
 $paymentStmt = $pdo->prepare($paymentSql);
 $paymentStmt->execute();
 $payments = $paymentStmt->fetchAll(PDO::FETCH_ASSOC);
@@ -91,7 +91,14 @@ $interval = new DateInterval('P1M');
 <html>
 <?php
 $pageTitle = 'Dashboard';
-include './common/head.php'; ?>
+include './common/head.php';
+
+$topbarTitle = 'Payment ';
+$breadcrumbs = [
+    ['title' => 'Home', 'url' => 'index.php'],
+    ['title' => 'Pay Scheme', 'url' => '']
+];
+?>
 
 <body ng-app="myApp" ng-controller="MyController as jb" class="bg-light">
     <div>
@@ -107,25 +114,24 @@ include './common/head.php'; ?>
             <div class="content-scrollable card border-0">
 
                 <div class="container py-5">
-                    <?php if ($isAdmin): ?>
-                        <div class="col-md-4 mb-3">
-                            <label for="selectUserId">Select User</label>
-                            <select onchange="paySchemeUserSelect()" name="user_id" id="selectUserId"
-                                class="form-select p-2">
-                                <option value="" selected>select user</option>
-                                <?php foreach ($userData as $user): ?>
-                                    <?php
-                                    $selected = ($_GET['user_id'] == $user['id']) ? 'selected="selected"' : '';
-                                    ?>
-                                    <option value="<?= $user['id'] ?>" <?= $selected ?>>
-                                        <?= $user['user_name'] ?> - <?= $user['mobile'] ?>
-                                    </option>
-                                <?php endforeach ?>
-                            </select>
-                            <p class="text-danger error-message m-0" id="selectUserIdError"></p>
+                    <div class="col-md-4 mb-3 <?php echo !$isAdmin ? "visually-hidden" : "" ?>">
+                        <label for="selectPayUserId">Select User</label>
+                        <select onchange="paySchemeUserSelect()" name="user_id" id="selectPayUserId"
+                            class="form-select p-2">
+                            <option value="" selected>select user</option>
+                            <?php foreach ($userData as $user): ?>
+                                <?php
+                                $selected = (!$isAdmin && $user['id'] == $authUserId) || ($isAdmin && $user['id'] == $_GET['user_id']) ? 'selected="selected"' : '';
+                                ?>
 
-                        </div>
-                    <?php endif ?>
+                                <option value="<?= $user['id'] ?>" <?= $selected ?>>
+                                    <?= $user['user_name'] ?> - <?= $user['mobile'] ?>
+                                </option>
+                            <?php endforeach ?>
+                        </select>
+                        <p class="text-danger error-message m-0" id="selectPayUserIdError"></p>
+
+                    </div>
                     <div class="row g-4">
                         <?php foreach ($combinedData as $userChit): ?>
                             <?php $jsonChit = htmlspecialchars(json_encode($userChit['chit']), ENT_QUOTES, 'UTF-8'); ?>
@@ -190,7 +196,7 @@ include './common/head.php'; ?>
                                             }
                                             ?>
                                             <div class="d-flex justify-content-between text-muted small border-bottom py-1">
-                                                <span><?= $date->format('F Y') ?></span>
+                                                <span><?= $date->format('F') ?> - <?= $date->format('Y') ?></span>
                                                 <span
                                                     class="badge rounded-pill bg-<?= $badgeClass ?>"><?= ucfirst($status) ?></span>
                                             </div>
@@ -203,11 +209,16 @@ include './common/head.php'; ?>
                                             </div>
                                         <?php endif; ?> -->
                                         <?php if ($userChit['chit']['status'] === "approved"): ?>
-                                            <div class="d-flex justify-content-end  gap-2 mb-3">
+                                            <?php if (count($userChit['payments']) != $userChit['chit']['scheme_tenure']): ?>
                                                 <button
-                                                    onclick="payChitModal(<?= $userChit['chit']['id'] ?>,<?= $userChit['chit']['chit_amount'] ?>)"
-                                                    class="btn btn-primary rounded-pill">Pay</button>
-                                            </div>
+                                                    onclick="payChitModal(event,<?= $userChit['chit']['id'] ?>,<?= $userChit['chit']['chit_amount'] ?>, '<?= $userChit['chit']['scheme_name'] ?>','<?= $userChit['chit']['chit_scheme_number'] ?>')"
+                                                    class="btn btn-primary rounded-pill w-100 mt-3">
+                                                    <span class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
+                                                    <span class="" role="status">Pay</span>
+                                                </button>
+                                            <?php else: ?>
+                                                <button class="btn btn-success rounded-pill  w-100  mt-3">Completed </button>
+                                            <?php endif ?>
                                         <?php endif ?>
                                     </div>
                                 </div>
@@ -222,23 +233,22 @@ include './common/head.php'; ?>
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="payChitModalLabel">Modal title</h1>
+                                <h1 class="modal-title fs-5" id="payChitModalLabel">Confirm to Pay</h1>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
-                            <div class="modal-body">
+                            <div class="modal-body m-auto" id="paymentModalContent">
                                 Are You Sure to pay
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary" onclick="confirmChitPayment()">Yes,
-                                    Change</button>
+                                <button type="button" class="btn btn-primary" onclick="confirmChitPayment(event)">
+                                    <span class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
+                                    <span class="" role="status">Yes, Change</span></button>
                             </div>
                         </div>
                     </div>
                 </div>
-
-
             </div>
         </div>
     </div>
