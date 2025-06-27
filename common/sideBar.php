@@ -16,7 +16,7 @@ $adminNavList = [
         'list' => [
             ['link' => 'month-wise-payment.php', 'linkName' => 'month wise payment'],
             ['link' => 'change-status.php', 'linkName' => 'change status'],
-            ['link' => 'close-scheme.php', 'linkName' => 'close scheme'],
+            // ['link' => 'close-scheme.php', 'linkName' => 'close scheme'],
         ]
     ]
 ];

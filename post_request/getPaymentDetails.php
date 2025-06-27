@@ -18,7 +18,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     validate_required($data, 'chit_id', $errors);
     validate_required($data, 'amount', $errors);
     validate_required($data, 'user_id', $errors);
-
+    
+    if (!empty($errors)) {
+        send_json_error('Validation failed', $errors, 422);
+    }
     // print_r($data);
     $chit_id = $data['chit_id'];
     $user_id = $data['user_id'];

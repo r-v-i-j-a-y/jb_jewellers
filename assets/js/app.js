@@ -526,7 +526,7 @@ async function confirmStatusChange(event) {
 }
 
 /************************* Chit Creat ****************************/
-chitCreate = async (event, formId) => {
+async function chitCreate(event, formId) {
   event.preventDefault();
 
   validate_status = form_validation(formId);
@@ -556,7 +556,7 @@ chitCreate = async (event, formId) => {
       button_loader(event);
     },
   });
-};
+}
 
 /*************************** Chit Status Change  *******************************/
 let chitSelected = null;
@@ -721,7 +721,7 @@ async function payChitModal(event, id, amount, scheme, chit_number) {
     url: "post_request/getPaymentDetails.php",
     data,
     success: function (response) {
-      const { status, message, errors, data } = response;
+      const { status, message, errors } = response;
       if (status == "success") {
         const modal = bootstrap.Modal.getOrCreateInstance(
           $("#payChitModal")[0]
@@ -732,11 +732,14 @@ async function payChitModal(event, id, amount, scheme, chit_number) {
         <div calss=>
         <p>Scheme - ${scheme}</p>
         <p>Chit Number - ${chit_number}</p>
-        <p>Month - ${data["month"]}</p>
-        <p>Year - ${data["year"]}</p>
+        <p>Month - ${response.data["month"]}</p>
+        <p>Year - ${response.data["year"]}</p>
         <p>Amount - ${amount} ₹</p>
         </div>
         `;
+        data.month = response.data["month"];
+        data.year = response.data["year"];
+        data.payment_id = response.data["payment_id"];
         $("#paymentModalContent").html(details);
       } else {
         // const modal = bootstrap.Modal.getOrCreateInstance(
@@ -750,33 +753,123 @@ async function payChitModal(event, id, amount, scheme, chit_number) {
   });
 }
 
-async function confirmChitPayment(event) {
+async function confirmChitPayment(event, razerpay_key, razerpay_secret) {
+  debugger;
   button_loader(event);
 
   await $.ajax({
     type: "POST",
-    url: "post_request/chitPaymentRequest.php",
+    url: "post_request/razerPayCreateOrder.php",
     data,
+    success: function (response) {
+      let payment_id = "";
+      const data = JSON.parse(response);
+      const options = {
+        key: razerpay_key, // Replace with your key
+        amount: data.amount,
+        currency: data.currency,
+        name: "Your Company Name",
+        description: "Test Transaction",
+        order_id: data.order_id,
+        handler: function (response) {
+          // payment_id = JSON.parse(response).payment_id;
+          $.ajax({
+            type: "POST",
+            url: "post_request/razerPayStatusRequest.php",
+            data: {
+              payment_id: response.razorpay_payment_id,
+              status: "success",
+            },
+            success: function (response) {
+              ToastService.success("Success", response.message);
+            },
+          });
+          // fetch("verify_payment.php", {
+          //   method: "POST",
+          //   headers: { "Content-Type": "application/json" },
+          //   body: JSON.stringify({ payment_id: response.razorpay_payment_id }),
+          // });
+          // alert(
+          //   "Payment Successful!\nPayment ID: " + response.razorpay_payment_id
+          // );
+        },
+        modal: {
+          ondismiss: function () {
+            data.status = "failed";
+            $.ajax({
+              type: "POST",
+              url: "post_request/razerPayStatusRequest.php",
+              data: data,
+              success: function (response) {
+                ToastService.error("Error", response.message);
+              },
+            });
+          },
+        },
+        prefill: {
+          name: "Vijay",
+          email: "vijay@example.com",
+          contact: "9999999999",
+        },
+        theme: {
+          color: "#3399cc",
+        },
+      };
+
+      const rzp1 = new Razorpay(options);
+      rzp1.open();
+      button_loader(event);
+    },
+  });
+
+  // await $.ajax({
+  //   type: "POST",
+  //   url: "post_request/chitPaymentRequest.php",
+  //   data,
+  //   success: function (response) {
+  //     const { status, message, errors } = response;
+  //     if (status == "success") {
+  //       ToastService.success("Success", message);
+
+  //       const modal = bootstrap.Modal.getOrCreateInstance(
+  //         $("#payChitModal")[0]
+  //       );
+  //       modal.hide();
+  //       window.location.reload();
+  //     } else {
+  //       const modal = bootstrap.Modal.getOrCreateInstance(
+  //         $("#payChitModal")[0]
+  //       );
+  //       modal.hide();
+  //       ToastService.error("Error", message);
+  //     }
+  //     button_loader(event);
+  //   },
+  // });
+}
+
+/************************* Send Otp  ************************/
+async function sendOtpToUser(event, mobile) {
+  button_loader(event);
+
+  await $.ajax({
+    type: "POST",
+    url: "post_request/otpGenerateRequest.php",
+    data: { mobile },
     success: function (response) {
       const { status, message, errors } = response;
       if (status == "success") {
         ToastService.success("Success", message);
-
-        const modal = bootstrap.Modal.getOrCreateInstance(
-          $("#payChitModal")[0]
-        );
-        modal.hide();
-        window.location.reload();
+        const modal = bootstrap.Modal.getOrCreateInstance($("#otpModal")[0]);
+        modal.show();
       } else {
-        const modal = bootstrap.Modal.getOrCreateInstance(
-          $("#payChitModal")[0]
-        );
-        modal.hide();
         ToastService.error("Error", message);
       }
       button_loader(event);
     },
   });
+  // const modal = bootstrap.Modal.getOrCreateInstance($("#otpModal")[0]);
+  // modal.show();
 }
 
 /********************* Data Table  *************************/
@@ -918,11 +1011,73 @@ function showPassword(event) {
   inputElement.type = inputElement.type === "password" ? "text" : "password";
 }
 
-{
-  /* <button ng-click="photo.id_proof_delete($event)" class="btn btn-danger" type="button">
-                                <span class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
-                                <span class="" role="status">Delete</span>
-                            </button> */
+/************************** Forgot Password ******************/
+
+async function forgotPassword(event, formId) {
+  event.preventDefault();
+
+  validate_status = form_validation(formId);
+
+  var formData = new FormData($("#" + formId)[0]);
+  if (!validate_status) {
+    return;
+  }
+  button_loader(event);
+  await $.ajax({
+    type: "POST",
+    url: "post_request/forgotPasswordRequest.php",
+    data: formData,
+    processData: false,
+    contentType: false,
+    success: function (response) {
+      const { status, message, errors } = response;
+      if (status == "success") {
+        ToastService.success("Success", message);
+        clearForm(formId);
+      } else {
+        // let firstKey = Object.keys(errors)[0];
+        // let firstErrorMessage = errors[firstKey][0];
+        ToastService.error("Error", message);
+      }
+      button_loader(event);
+    },
+  });
+}
+
+/************************** reset Password ******************/
+
+async function resetPassword(event, formId) {
+  event.preventDefault();
+
+  validate_status = form_validation(formId);
+
+  var formData = new FormData($("#" + formId)[0]);
+  if (!validate_status) {
+    return;
+  }
+  button_loader(event);
+  await $.ajax({
+    type: "POST",
+    url: "post_request/resetPasswordRequest.php",
+    data: formData,
+    processData: false,
+    contentType: false,
+    success: function (response) {
+      const { status, message, errors } = response;
+      if (status == "success") {
+        ToastService.success("Success", message);
+        clearForm(formId);
+        setTimeout(() => {
+          window.location = "login.php";
+        }, 1000);
+      } else {
+        // let firstKey = Object.keys(errors)[0];
+        // let firstErrorMessage = errors[firstKey][0];
+        ToastService.error("Error", message);
+      }
+      button_loader(event);
+    },
+  });
 }
 
 /*********************** Pay scheme user select **********************/

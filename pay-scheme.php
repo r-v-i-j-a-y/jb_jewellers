@@ -2,6 +2,7 @@
 
 require './functions/middleware.php';
 require './config/db.php';
+$env = parse_ini_file('.env');
 
 $authData = auth_protect();
 $authUserId = $authData['id'];
@@ -242,7 +243,8 @@ $breadcrumbs = [
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary" onclick="confirmChitPayment(event)">
+                                <button type="button" class="btn btn-primary"
+                                    onclick="confirmChitPayment(event,'<?= $env['RAZER_PAY_KEY_ID'] ?>','<?= $env['RAZER_PAY_SECRET'] ?>')">
                                     <span class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
                                     <span class="" role="status">Yes, Change</span></button>
                             </div>

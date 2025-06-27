@@ -1,27 +1,13 @@
 <script src='./assets/js/lib/jquery.js'></script>
-<!-- <script src="./assets/js/lib/angular.js"></script> -->
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+<script src="./assets/js/lib/popper.js"></script>
 <script src="./assets/js/lib/bootstrap.min.js"></script>
 <script src="./assets/js/lib/toaster/iziToast.min.js"></script>
-<!-- <script src="/js/lib/tables/datatables.min.js"></script>
-<script src="/js/lib/tables/buttons.js"></script>
-<script src="/js/lib/tables/buttonHtml.js"></script> -->
-
-<!-- DataTables 1.13.6 Core -->
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-
-
-<!-- Buttons + JSZip -->
-<script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
-
-<!-- Required for PDF export -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
-
-<!-- Bootstrap Select JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta3/js/bootstrap-select.min.js"></script>
-
-
+<script src="./assets/js/lib/tables/datatable.js"></script>
+<script src="./assets/js/lib/tables/buttons.js"></script>
+<script src="./assets/js/lib/jszip.js"></script>
+<script src="./assets/js/lib/tables/buttonHtml.js"></script>
+<script src="./assets/js/lib/pdfmake.js"></script>
+<script src="./assets/js/lib/pdfFonts.js"></script>
+<script src="./assets/js/lib/select.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script src="./assets/js/app.js"></script>

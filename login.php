@@ -49,7 +49,7 @@ include './common/head.php'; ?>
                                     </div>
 
                                     <div class="text-end mb-3">
-                                        <a href="#" class="text-decoration-none small">Forgot password?</a>
+                                        <a href="forgot-password.php" class="text-decoration-none small">Forgot password?</a>
                                     </div>
 
                                     <button class="btn btn-danger w-100 rounded-pill" type="submit"

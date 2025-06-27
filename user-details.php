@@ -211,17 +211,48 @@ $nomineeRelationArry = ["mother", "father", "brother", "sister", "wife", "son", 
                             </div>
 
                             <!-- Submit Button -->
-                            <div class="text-end mt-4">
-                                <button type="button" class="btn btn-primary"
-                                    onclick="userDetailsUpdate(event, 'userDetailsForm')">
-                                    <span class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
-                                    <span class="" role="status">Update</span>
-                                </button>
-                            </div>
+                            <?php if (!$isAdmin): ?>
+                                <div class="text-end mt-4">
+                                    <button type="button" class="btn btn-primary"
+                                        onclick="userDetailsUpdate(event, 'userDetailsForm')">
+                                        <span class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
+                                        <span class="" role="status">Update</span>
+                                    </button>
+                                </div>
+                            <?php else: ?>
+                                <div class="text-end mt-4">
+                                    <button type="button" class="btn btn-primary"
+                                        onclick="sendOtpToUser(event,'<?= $authData['mobile'] ?>')">
+                                        <span class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
+                                        <span class="" role="status">Send Otp</span>
+                                    </button>
+                                </div>
+                            <?php endif ?>
                         </form>
                     <?php } ?>
                 </div>
 
+            </div>
+            <div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="otpModalLabel">OTP</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Enter opt here
+                            <input type="text">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" onclick="confirmChitPurchase(event)">
+                                <span class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
+                                <span class="" role="status">Yes, Purchase</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
