@@ -76,7 +76,7 @@ include './common/head.php'; ?>
                                         <button class="btn btn-success w-100 rounded-pill mt-2" type="submit"
                                             onclick="resetPassword(event,'resetPasswordForm')">
                                             <span class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
-                                            <span class="" role="status">Reset password</span>
+                                            <span class="d-flex justify-content-center align-items-center" role="status"><i class="fa-solid fa-rotate-right me-2"></i>Reset password</span>
                                         </button>
                                     </form>
                                 <?php else: ?>

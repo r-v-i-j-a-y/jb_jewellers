@@ -3,19 +3,19 @@ $adminNavList = [
     [
         'title' => 'members details',
         'list' => [
-            ['link' => 'index.php', 'linkName' => 'Dashboard'],
-            ['link' => 'purchase-scheme.php', 'linkName' => 'purchase scheme'],
-            ['link' => 'pay-scheme.php', 'linkName' => 'pay scheme'],
-            ['link' => 'view-users.php', 'linkName' => 'view users'],
-            ['link' => 'schemes.php', 'linkName' => 'schemes'],
+            ['link' => 'index.php', 'linkName' => 'Dashboard', 'icon' => '<i class="fa-solid fa-house me-2"></i>'],
+            ['link' => 'purchase-scheme.php', 'linkName' => 'purchase scheme', 'icon' => '<i class="fa-solid fa-cart-shopping me-2"></i>'],
+            ['link' => 'pay-scheme.php', 'linkName' => 'pay scheme', 'icon' => '<i class="fa-solid fa-credit-card me-2"></i>'],
+            ['link' => 'view-users.php', 'linkName' => 'view users', 'icon' => '<i class="fa-solid fa-users me-2"></i>'],
+            ['link' => 'schemes.php', 'linkName' => 'schemes', 'icon' => '<i class="fa-solid fa-clipboard-list me-2"></i>'],
             // ['link' => 'chit-details.php', 'linkName' => 'chit details'],
         ]
     ],
     [
         'title' => 'transaction details.php',
         'list' => [
-            ['link' => 'month-wise-payment.php', 'linkName' => 'month wise payment'],
-            ['link' => 'change-status.php', 'linkName' => 'change status'],
+            ['link' => 'month-wise-payment.php', 'linkName' => 'month wise payment','icon' => '<i class="fa-solid fa-calendar-days me-2"></i>'],
+            ['link' => 'change-status.php', 'linkName' => 'change status','icon' => '<i class="fa-solid fa-diagram-project me-2"></i>'],
             // ['link' => 'close-scheme.php', 'linkName' => 'close scheme'],
         ]
     ]
@@ -25,15 +25,15 @@ $userNavList = [
     [
         'title' => 'members details',
         'list' => [
-            ['link' => 'index.php', 'linkName' => 'Dashboard'],
-            ['link' => "user-details.php", 'linkName' => 'Personal Details'],
-            ['link' => 'purchase-scheme.php', 'linkName' => 'Purchase schemes'],
-             ['link' => 'pay-scheme.php', 'linkName' => 'pay scheme'],
-            ['link' => 'payment-history.php', 'linkName' => 'Payment History'],
+            ['link' => 'index.php', 'linkName' => 'Dashboard', 'icon' => '<i class="fa-solid fa-house me-2"></i>'],
+            ['link' => "user-details.php", 'linkName' => 'Personal Details', 'icon' => '<i class="fa-solid fa-user me-2"></i>'],
+            ['link' => 'purchase-scheme.php', 'linkName' => 'Purchase schemes', 'icon' => '<i class="fa-solid fa-clipboard-list me-2"></i>'],
+            ['link' => 'pay-scheme.php', 'linkName' => 'pay scheme', 'icon' => '<i class="fa-solid fa-credit-card me-2"></i>'],
+            ['link' => 'payment-history.php', 'linkName' => 'Payment History', 'icon' => '<i class="fa-solid fa-rectangle-list me-2"></i>'],
             // ['link' => 'chit-details.php', 'linkName' => 'chit details'],
         ]
     ],
-    
+
 ];
 
 $navList = $authData['role_id'] == 1 ? $adminNavList : $userNavList;
@@ -55,7 +55,7 @@ $currentUri = basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
                             <?php foreach ($section['list'] as $item): ?>
                                 <li class="nav-link mb-2 text-capitalize <?= $currentUri == $item['link'] ? "active" : "" ?>">
                                     <a href="<?= $item['link'] == 'user-details.php' ? $item['link'] . "?id=$authUserId" : $item['link'] ?>"
-                                        class="text-decoration-none text-muted"><?= htmlspecialchars($item['linkName']) ?></a>
+                                        class="text-decoration-none text-muted "><?= $item['icon'] ?><?= htmlspecialchars($item['linkName']) ?></a>
                                 </li>
                             <?php endforeach; ?>
                         </ul>

@@ -55,7 +55,7 @@ include './common/head.php'; ?>
                                     <button class="btn btn-danger w-100 rounded-pill" type="submit"
                                         onclick="loginSubmit(event,'loginForm')">
                                         <span class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
-                                        <span class="" role="status">Login</span>
+                                        <span class="d-flex justify-content-center align-items-center" role="status"><i class="fa-solid fa-right-to-bracket me-2"></i> Login</span>
                                     </button>
                                 </form>
 

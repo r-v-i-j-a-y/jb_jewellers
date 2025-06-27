@@ -32,14 +32,14 @@ body {
   overflow: auto;
 }
 
-.sidebar .nav-link {
+.nav-link {
   color: #333;
   border-radius: 10px;
   padding: 0.75rem 1rem;
 }
 
-.sidebar .nav-link:hover,
-.sidebar .nav-link.active {
+.nav-link:hover,
+.nav-link.active {
   background-color: #4e5bf2 !important;
   color: #fff !important;
 }
@@ -140,7 +140,6 @@ body {
   border-radius: 2rem;
   background-color: #e9ecef;
   position: relative;
-  
 }
 
 .form-check-input:checked {
@@ -148,41 +147,57 @@ body {
   border-color: #3b82f6;
 }
 
-
 .table-responsive {
-    overflow-x: auto;
-    white-space: nowrap;
+  overflow-x: auto;
+  white-space: nowrap;
 }
 
- .toggle-password {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
+.toggle-password {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
 }
-
 
 .breadcrumb {
-    font-size: 14px;
-  }
+  font-size: 14px;
+}
 
-  .breadcrumb-item + .breadcrumb-item::before {
-    content: ">";
-    padding: 0 8px;
-    color: #888;
-  }
+.breadcrumb-item + .breadcrumb-item::before {
+  content: ">";
+  padding: 0 8px;
+  color: #888;
+}
 
-  .breadcrumb-item.active {
-    font-weight: bold;
-    color: #333;
-  }
+.breadcrumb-item.active {
+  font-weight: bold;
+  color: #333;
+}
 
-  .breadcrumb a {
-    color: #6c757d;
-    text-decoration: none;
-  }
+.breadcrumb a {
+  color: #6c757d;
+  text-decoration: none;
+}
 
-  .breadcrumb a:hover {
-    text-decoration: underline;
-  }
+.breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+.text-justify {
+  text-align: justify;
+}
+
+.accordion-body {
+  transition: all 0.3s ease-in-out;
+}
+
+.accordion-button:not(.collapsed) {
+  background-color: #e7f1ff;
+  color: #0d6efd;
+  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.125);
+}
+
+.accordion-button:focus {
+  box-shadow: none;
+}

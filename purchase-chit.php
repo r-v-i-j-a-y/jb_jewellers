@@ -100,7 +100,7 @@ $breadcrumbs = [
                             <!-- Select User -->
                             <div class="col-md-4">
                                 <label for="selectUserId">Select User</label>
-                                <select name="user_id" id="selectUserId" class="form-select p-2">
+                                <select name="user_id" id="selectUserId" class="selectpicker p-2" data-live-search="true">
                                     <option value="" selected>select user</option>
                                     <?php foreach ($userData as $user): ?>
                                         <?php

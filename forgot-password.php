@@ -43,7 +43,7 @@ include './common/head.php'; ?>
                                     <button class="btn btn-danger w-100 rounded-pill mt-2" type="submit"
                                         onclick="forgotPassword(event,'forgotPasswordForm')">
                                         <span class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
-                                        <span class="" role="status">Send reset email</span>
+                                        <span class="d-flex justify-content-center align-items-center" role="status"><i class="fa-solid fa-envelope me-2"></i>Send reset email</span>
                                     </button>
                                 </form>
 

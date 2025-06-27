@@ -86,6 +86,7 @@ foreach ($userChitData as $chit) {
 // Create a DateInterval of 1 month
 $interval = new DateInterval('P1M');
 
+$selecedUserId = isset($_GET['user_id']) ? $_GET['user_id'] : null;
 ?>
 
 <!DOCTYPE html>
@@ -118,14 +119,10 @@ $breadcrumbs = [
                     <div class="col-md-4 mb-3 <?php echo !$isAdmin ? "visually-hidden" : "" ?>">
                         <label for="selectPayUserId">Select User</label>
                         <select onchange="paySchemeUserSelect()" name="user_id" id="selectPayUserId"
-                            class="form-select p-2">
+                            class="selectpicker p-2" data-live-search="true">
                             <option value="" selected>select user</option>
                             <?php foreach ($userData as $user): ?>
-                                <?php
-                                $selected = (!$isAdmin && $user['id'] == $authUserId) || ($isAdmin && $user['id'] == $_GET['user_id']) ? 'selected="selected"' : '';
-                                ?>
-
-                                <option value="<?= $user['id'] ?>" <?= $selected ?>>
+                                <option value="<?= $user['id'] ?>" <?php echo (!$isAdmin && $user['id'] == $authUserId) || ($isAdmin && $user['id'] == $selecedUserId) ? 'selected="selected"' : '' ?>>
                                     <?= $user['user_name'] ?> - <?= $user['mobile'] ?>
                                 </option>
                             <?php endforeach ?>

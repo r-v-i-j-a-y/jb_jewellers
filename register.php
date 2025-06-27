@@ -67,7 +67,7 @@ include './common/head.php'; ?>
                                     <button class="btn btn-primary w-100 rounded-pill mt-3"
                                         onclick="registerSubmit(event,'registerForm')">
                                         <span class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
-                                        <span class="" role="status">Register</span>
+                                        <span class="d-flex justify-content-center align-items-center" role="status"> <i class="fa-solid fa-address-card me-2"></i>Register</span>
                                     </button>
                                 </form>
 
