@@ -65,7 +65,7 @@ $schemeData = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 <!DOCTYPE html>
 <html>
 <?php
-$pageTitle = 'Dashboard';
+$pageTitle = 'Chits';
 include './common/head.php';
 
 $topbarTitle = 'Chit List';
@@ -87,7 +87,7 @@ $breadcrumbs = [
             <?php include './common/topBar.php'; ?>
 
             <!-- Scrollable Content -->
-            <div class="content-scrollable card border-0">
+            <div class="content-scrollable card border-0 d-flex justify-content-between">
 
                 <div class="container py-5">
                     <div class="row g-4">
@@ -144,6 +144,7 @@ $breadcrumbs = [
 
                     </div>
                 </div>
+                  <?php include './footerTop.php'; ?>
 
                 <!-- Modal -->
                 <div class="modal fade" id="chitStatusModal" tabindex="-1" aria-labelledby="chitStatusModalLabel"

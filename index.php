@@ -5,6 +5,7 @@ require './config/db.php';
 
 $authData = auth_protect();
 $authUserId = $authData['id'];
+$isAdmin = ($authData['role_id'] == 1) ? true : false;
 
 $sql = "SELECT 
                 pr_schemes.id,
@@ -50,11 +51,12 @@ $breadcrumbs = [
             <?php include './common/topBar.php'; ?>
 
             <!-- Scrollable Content -->
-            <div class="content-scrollable card border-0">
+            <div class="content-scrollable card border-0 d-flex justify-content-between">
 
-                <div class="container py-5">
-
+                <div class="container py-4">
+                    <img src="./assets/images/banner.jpg" class="object-fit-contain w-100 h-100 rounded-4" alt="">
                 </div>
+                <?php include './footerTop.php'; ?>
             </div>
         </div>
     </div>

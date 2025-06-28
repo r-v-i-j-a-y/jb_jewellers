@@ -5,6 +5,7 @@ require './config/db.php';
 
 $authData = auth_protect();
 $authUserId = $authData['id'];
+$isAdmin = ($authData['role_id'] == 1) ? true : false;
 
 
 $sql = "
@@ -34,7 +35,7 @@ $schemeData = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <html>
 
 <?php
-$pageTitle = 'Dashboard';
+$pageTitle = 'Schemes';
 include './common/head.php';
 $topbarTitle = 'Scheme List';
 $breadcrumbs = [
@@ -54,7 +55,7 @@ $breadcrumbs = [
             <?php include './common/topBar.php'; ?>
 
             <!-- Scrollable Content -->
-            <div class="content-scrollable card border-0">
+            <div class="content-scrollable card border-0 d-flex justify-content-between">
 
                 <div class="container py-5">
                     <div class="row g-4">
@@ -103,6 +104,7 @@ $breadcrumbs = [
 
                     </div>
                 </div>
+                  <?php include './footerTop.php'; ?>
 
                 <!-- Modal -->
                 <div class="modal fade" id="schemeStatusModal" tabindex="-1" aria-labelledby="schemeStatusModalLabel"

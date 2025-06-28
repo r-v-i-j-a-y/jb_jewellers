@@ -21,6 +21,28 @@ function renderBreadcrumbsWithLinks($items = [])
 
     echo '</ol></nav>';
 }
+
+
+
+$sql = "SELECT 
+        ntf.notification_status
+        FROM pr_notifications as ntf 
+        LEFT JOIN pr_users as us ON ntf.user_id = us.id
+        WHERE ntf.notification_status = 'unread'
+        ";
+
+if ($isAdmin) {
+    $sql .= " AND us.role_id = 1";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+} else {
+    $sql .= " AND ntf.user_id = :user_id";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(['user_id' => $authUserId]);
+}
+
+$notificationDataCount = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 ?>
 
 <div class="topbar d-flex justify-content-between align-items-center">
@@ -38,7 +60,32 @@ function renderBreadcrumbsWithLinks($items = [])
             <li class="nav-link  <?= $currentUri == 'faq.php' ? "active" : "" ?>"><a
                     class="text-decoration-none text-muted" href="faq.php">FAQ</a></li>
         </ul>
-        <img src="https://i.pravatar.cc/100?img=6" class="user-img" alt="User">
+
+        <div class="position-relative d-inline-block">
+            <a href="notification.php">
+                <i class="fa-solid fa-bell fs-4 text-muted"></i>
+                <?php if (count($notificationDataCount) > 0): ?>
+                    <span class="position-absolute top-25 start-100 translate-middle badge rounded-pill bg-danger">
+                        <?= count($notificationDataCount) ?>
+                        <!-- <span class="visually-hidden">unread messages</span> -->
+                    </span>
+                <?php endif ?>
+            </a>
+        </div>
+        <div class="dropdown text-end p-3">
+
+            <img src="https://i.pravatar.cc/100?img=6" id="profileDropdown" class="profile-img" alt="Profile">
+
+            <ul class="dropdown-menu dropdown-menu-end text-small mt-2" aria-labelledby="profileDropdown">
+                <li><a class="dropdown-item" href="adminRegisterPage.php">Register</a></li>
+                <li><a class="dropdown-item" href="#">Reset Password</a></li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+                <li><a class="dropdown-item" href="#">Logout</a></li>
+            </ul>
+        </div>
+        <!-- <img  class="user-img" alt="User"> -->
         <div>
             <!-- <div class="fw-semibold"><?php echo $authData['id'] ?></div> -->
             <small class="text-muted ">Role : <?php echo $authData['role_name'] ?></small>

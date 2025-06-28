@@ -8,14 +8,15 @@ $adminNavList = [
             ['link' => 'pay-scheme.php', 'linkName' => 'pay scheme', 'icon' => '<i class="fa-solid fa-credit-card me-2"></i>'],
             ['link' => 'view-users.php', 'linkName' => 'view users', 'icon' => '<i class="fa-solid fa-users me-2"></i>'],
             ['link' => 'schemes.php', 'linkName' => 'schemes', 'icon' => '<i class="fa-solid fa-clipboard-list me-2"></i>'],
+            ['link' => 'notification.php', 'linkName' => 'Notifications', 'icon' => '<i class="fa-solid fa-bell me-2"></i>'],
             // ['link' => 'chit-details.php', 'linkName' => 'chit details'],
         ]
     ],
     [
         'title' => 'transaction details.php',
         'list' => [
-            ['link' => 'month-wise-payment.php', 'linkName' => 'month wise payment','icon' => '<i class="fa-solid fa-calendar-days me-2"></i>'],
-            ['link' => 'change-status.php', 'linkName' => 'change status','icon' => '<i class="fa-solid fa-diagram-project me-2"></i>'],
+            ['link' => 'month-wise-payment.php', 'linkName' => 'month wise payment', 'icon' => '<i class="fa-solid fa-calendar-days me-2"></i>'],
+            ['link' => 'change-status.php', 'linkName' => 'change status', 'icon' => '<i class="fa-solid fa-diagram-project me-2"></i>'],
             // ['link' => 'close-scheme.php', 'linkName' => 'close scheme'],
         ]
     ]
@@ -30,6 +31,7 @@ $userNavList = [
             ['link' => 'purchase-scheme.php', 'linkName' => 'Purchase schemes', 'icon' => '<i class="fa-solid fa-clipboard-list me-2"></i>'],
             ['link' => 'pay-scheme.php', 'linkName' => 'pay scheme', 'icon' => '<i class="fa-solid fa-credit-card me-2"></i>'],
             ['link' => 'payment-history.php', 'linkName' => 'Payment History', 'icon' => '<i class="fa-solid fa-rectangle-list me-2"></i>'],
+            ['link' => 'notification.php', 'linkName' => 'Notifications', 'icon' => '<i class="fa-solid fa-bell me-2"></i>'],
             // ['link' => 'chit-details.php', 'linkName' => 'chit details'],
         ]
     ],

@@ -754,73 +754,80 @@ async function payChitModal(event, id, amount, scheme, chit_number) {
 }
 
 async function confirmChitPayment(event, razerpay_key, razerpay_secret) {
-  debugger;
   button_loader(event);
 
-  await $.ajax({
-    type: "POST",
-    url: "post_request/razerPayCreateOrder.php",
-    data,
-    success: function (response) {
-      let payment_id = "";
-      const data = JSON.parse(response);
-      const options = {
-        key: razerpay_key, // Replace with your key
-        amount: data.amount,
-        currency: data.currency,
-        name: "Your Company Name",
-        description: "Test Transaction",
-        order_id: data.order_id,
-        handler: function (response) {
-          // payment_id = JSON.parse(response).payment_id;
-          $.ajax({
-            type: "POST",
-            url: "post_request/razerPayStatusRequest.php",
-            data: {
-              payment_id: response.razorpay_payment_id,
-              status: "success",
-            },
-            success: function (response) {
-              ToastService.success("Success", response.message);
-            },
-          });
-          // fetch("verify_payment.php", {
-          //   method: "POST",
-          //   headers: { "Content-Type": "application/json" },
-          //   body: JSON.stringify({ payment_id: response.razorpay_payment_id }),
-          // });
-          // alert(
-          //   "Payment Successful!\nPayment ID: " + response.razorpay_payment_id
-          // );
-        },
-        modal: {
-          ondismiss: function () {
-            data.status = "failed";
+  let method = $('input[name="paymentMethoSelect"]:checked').val();
+  if (method == "upi") {
+    await $.ajax({
+      type: "POST",
+      url: "post_request/razerPayCreateOrder.php",
+      data,
+      success: function (response) {
+        let payment_id = "";
+        const data = JSON.parse(response);
+        const options = {
+          key: razerpay_key, // Replace with your key
+          amount: data.amount,
+          currency: data.currency,
+          name: "Your Company Name",
+          description: "Test Transaction",
+          order_id: data.order_id,
+          handler: function (response) {
+            // payment_id = JSON.parse(response).payment_id;
             $.ajax({
               type: "POST",
               url: "post_request/razerPayStatusRequest.php",
-              data: data,
+              data: {
+                payment_id: response.razorpay_payment_id,
+                status: "success",
+              },
               success: function (response) {
-                ToastService.error("Error", response.message);
+                ToastService.success("Success", response.message);
               },
             });
+            // fetch("verify_payment.php", {
+            //   method: "POST",
+            //   headers: { "Content-Type": "application/json" },
+            //   body: JSON.stringify({ payment_id: response.razorpay_payment_id }),
+            // });
+            // alert(
+            //   "Payment Successful!\nPayment ID: " + response.razorpay_payment_id
+            // );
           },
-        },
-        prefill: {
-          name: "Vijay",
-          email: "vijay@example.com",
-          contact: "9999999999",
-        },
-        theme: {
-          color: "#3399cc",
-        },
-      };
+          modal: {
+            ondismiss: function () {
+              data.status = "failed";
+              $.ajax({
+                type: "POST",
+                url: "post_request/razerPayStatusRequest.php",
+                data: data,
+                success: function (response) {
+                  ToastService.error("Error", response.message);
+                },
+              });
+            },
+          },
+          prefill: {
+            name: "Vijay",
+            email: "vijay@example.com",
+            contact: "9999999999",
+          },
+          theme: {
+            color: "#3399cc",
+          },
+        };
 
-      const rzp1 = new Razorpay(options);
-      rzp1.open();
-      button_loader(event);
-    },
-  });
+        const rzp1 = new Razorpay(options);
+        rzp1.open();
+        button_loader(event);
+      },
+    });
+  } else {
+    const modal = bootstrap.Modal.getOrCreateInstance($("#payChitModal")[0]);
+    modal.hide();
+    const otpModal = bootstrap.Modal.getOrCreateInstance($("#otpModal")[0]);
+    otpModal.show();
+  }
 
   // await $.ajax({
   //   type: "POST",

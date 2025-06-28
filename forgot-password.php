@@ -8,7 +8,7 @@ auth_check()
 <html>
 
 <?php
-$pageTitle = 'Login';
+$pageTitle = 'Forgot Password';
 include './common/head.php'; ?>
 
 <body ng-app="myApp" ng-controller="MyController as jb" class="bg-light">

@@ -2,9 +2,9 @@
 
 require './functions/middleware.php';
 require './config/db.php';
-
 $authData = auth_protect();
 $authUserId = $authData['id'];
+$isAdmin = ($authData['role_id'] == 1) ? true : false;
 
 $sql = "SELECT 
                 pr_schemes.id,
@@ -30,7 +30,7 @@ $schemeData = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <!DOCTYPE html>
 <html>
 <?php
-$pageTitle = 'Dashboard';
+$pageTitle = 'Purchase Scheme';
 include './common/head.php';
 
 $topbarTitle = 'Scheme List';
@@ -51,7 +51,7 @@ $breadcrumbs = [
             <?php include './common/topBar.php'; ?>
 
             <!-- Scrollable Content -->
-            <div class="content-scrollable card border-0">
+            <div class="content-scrollable card border-0 d-flex justify-content-between">
 
                 <div class="container py-5">
                     <div class="row g-4">
@@ -86,6 +86,7 @@ $breadcrumbs = [
 
                     </div>
                 </div>
+                  <?php include './footerTop.php'; ?>
             </div>
         </div>
     </div>

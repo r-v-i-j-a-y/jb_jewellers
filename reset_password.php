@@ -36,7 +36,7 @@ if (!empty($token)) {
 <html>
 
 <?php
-$pageTitle = 'Login';
+$pageTitle = 'Reset Password';
 include './common/head.php'; ?>
 
 <body ng-app="myApp" ng-controller="MyController as jb" class="bg-light">

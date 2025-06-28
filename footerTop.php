@@ -9,7 +9,7 @@
                 href="privacy-policy.php">Privacy Policy</a></li>
         <li class="  <?= $currentUri == 'return-and-refund-policy.php' ? "active" : "" ?>"><a class="text-decoration-none text-white"
                 href="return-and-refund-policy.php"> Return & Refund Policy</a></li>
-        <li class="  <?= $currentUri == 'faq.php' ? "active" : "" ?>"><a class="text-decoration-none text-white"
-                href="faq.php">Contact Us</a></li>
+        <li class="  <?= $currentUri == 'contact-us.php' ? "active" : "" ?>"><a class="text-decoration-none text-white"
+                href="contact-us.php">Contact Us</a></li>
     </ul>
 </div>

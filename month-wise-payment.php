@@ -5,6 +5,7 @@ require './config/db.php';
 
 $authData = auth_protect();
 $authUserId = $authData['id'];
+$isAdmin = ($authData['role_id'] == 1) ? true : false;
 $pdo = db_connection();
 
 
@@ -116,7 +117,7 @@ $paymentData = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <!DOCTYPE html>
 <html>
 <?php
-$pageTitle = 'Dashboard';
+$pageTitle = 'Payment Details';
 include './common/head.php';
 
 $topbarTitle = 'Payment History';
@@ -229,7 +230,7 @@ $breadcrumbs = [
                 </div>
             </div>
             <!-- Scrollable Content -->
-            <div class="content-scrollable card ">
+            <div class="content-scrollable card d-flex justify-content-between ">
 
                 <div class="container  mb-5 p-4">
 
@@ -276,6 +277,7 @@ $breadcrumbs = [
                     </div>
                 </div>
 
+                <?php include './footerTop.php'; ?>
             </div>
         </div>
     </div>

@@ -83,7 +83,7 @@ $nomineeRelationArry = ["mother", "father", "brother", "sister", "wife", "son", 
             <?php include './common/topBar.php'; ?>
 
             <!-- Scrollable Content -->
-            <div class="content-scrollable card border-0">
+            <div class="content-scrollable card border-0 d-flex justify-content-between">
                 <div class="container  my-5">
                     <?php if ($unauthorized) { ?>
                         <div class="d-flex flex-column align-items-center justify-content-center">
@@ -231,6 +231,7 @@ $nomineeRelationArry = ["mother", "father", "brother", "sister", "wife", "son", 
                         </form>
                     <?php } ?>
                 </div>
+                  <?php include './footerTop.php'; ?>
 
             </div>
             <div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true">

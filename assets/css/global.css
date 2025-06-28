@@ -201,3 +201,63 @@ body {
 .accordion-button:focus {
   box-shadow: none;
 }
+
+.dropdown:hover .dropdown-menu {
+  display: block;
+  margin-top: 0; /* remove the gap so it appears directly below */
+}
+.profile-img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.segmented-toggle {
+  background-color: rgb(0, 122, 61);
+  border-radius: 50px;
+  display: inline-flex;
+  position: relative;
+  padding: 4px;
+}
+
+.segmented-toggle input[type="radio"] {
+  display: none;
+}
+
+.segmented-toggle label {
+  color: white;
+  padding: 10px 25px;
+  cursor: pointer;
+  border-radius: 50px;
+  font-weight: bold;
+  position: relative;
+  z-index: 2;
+  transition: color 0.3s ease;
+}
+
+.segmented-toggle .highlight {
+  position: absolute;
+  height: 100%;
+  /* width: 50%; */
+  background-color: rgba(255, 255, 255, 0.4);
+  border-radius: 50px;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  transition: left 0.3s ease;
+}
+
+#option1:checked ~ .highlight {
+  left: 0%;
+}
+
+#option2:checked ~ .highlight {
+  left: 50%;
+}
+
+#option1:checked + label,
+#option2:checked + label {
+  color: black;
+}

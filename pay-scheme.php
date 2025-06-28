@@ -92,7 +92,7 @@ $selecedUserId = isset($_GET['user_id']) ? $_GET['user_id'] : null;
 <!DOCTYPE html>
 <html>
 <?php
-$pageTitle = 'Dashboard';
+$pageTitle = 'Pay Scheme';
 include './common/head.php';
 
 $topbarTitle = 'Payment ';
@@ -113,7 +113,7 @@ $breadcrumbs = [
             <?php include './common/topBar.php'; ?>
 
             <!-- Scrollable Content -->
-            <div class="content-scrollable card border-0">
+            <div class="content-scrollable card border-0 d-flex justify-content-between">
 
                 <div class="container py-5">
                     <div class="col-md-4 mb-3 <?php echo !$isAdmin ? "visually-hidden" : "" ?>">
@@ -224,7 +224,7 @@ $breadcrumbs = [
                         <?php endforeach ?>
                     </div>
                 </div>
-
+                <?php include './footerTop.php'; ?>
                 <!-- Modal -->
                 <div class="modal fade" id="payChitModal" tabindex="-1" aria-labelledby="payChitModalLabel"
                     aria-hidden="true">
@@ -238,12 +238,47 @@ $breadcrumbs = [
                             <div class="modal-body m-auto" id="paymentModalContent">
                                 Are You Sure to pay
                             </div>
+                            <div class="segmented-toggle m-auto">
+
+                                <input type="radio" value="upi" name="paymentMethoSelect" id="option1" checked>
+                                <label for="option1">Upi</label>
+
+                                <?php if ($isAdmin): ?>
+                                    <input type="radio" value="cash" name="paymentMethoSelect" id="option2">
+                                    <label for="option2">Cash</label>
+                                <?php endif ?>
+
+                                <div class="highlight <?= $isAdmin ? "w-50" : "w-100" ?> "></div>
+                            </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                 <button type="button" class="btn btn-primary"
                                     onclick="confirmChitPayment(event,'<?= $env['RAZER_PAY_KEY_ID'] ?>','<?= $env['RAZER_PAY_SECRET'] ?>')">
                                     <span class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
                                     <span class="" role="status">Yes, Change</span></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="otpModalLabel">OTP</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Enter opt here
+                                <input type="text">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-primary" onclick="confirmChitPurchase(event)">
+                                    <span class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
+                                    <span class="" role="status">Yes, Purchase</span>
+                                </button>
                             </div>
                         </div>
                     </div>

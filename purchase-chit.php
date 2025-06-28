@@ -64,7 +64,7 @@ $schemeData = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 <!DOCTYPE html>
 <html>
 <?php
-$pageTitle = 'Dashboard';
+$pageTitle = 'Puchase Chits';
 include './common/head.php';
 
 $topbarTitle = 'Chit List';
@@ -86,7 +86,7 @@ $breadcrumbs = [
             <?php include './common/topBar.php'; ?>
 
             <!-- Scrollable Content -->
-            <div class="content-scrollable card border-0">
+            <div class="content-scrollable card border-0 d-flex justify-content-between">
 
                 <div class="container py-5">
                     <div class="row g-4">
@@ -150,29 +150,8 @@ $breadcrumbs = [
                         <?php endforeach ?>
                     </div>
                 </div>
+                  <?php include './footerTop.php'; ?>
 
-                <!-- Modal -->
-                <!-- <div class="modal fade" id="chitStatusModal" tabindex="-1" aria-labelledby="chitStatusModalLabel"
-                    aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="chitStatusModalLabel">Modal title</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                Are You Sure to chage status
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
-                                    onclick="chitStatusChangeModalClose()">Close</button>
-                                <button type="button" class="btn btn-primary" onclick="confirmChitStatusChange()">Yes,
-                                    Change</button>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
                 <div class="modal fade" id="chitPurchaseModal" tabindex="-1" aria-labelledby="chitPurchaseModalLabel"
                     aria-hidden="true">
                     <div class="modal-dialog">

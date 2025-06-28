@@ -4,12 +4,14 @@ require './functions/middleware.php';
 require './config/db.php';
 $authData = auth_protect();
 $authUserId = $authData['id'];
+$isAdmin = ($authData['role_id'] == 1) ? true : false;
+$pdo = db_connection();
 ?>
 
 <!DOCTYPE html>
 <html>
 <?php
-$pageTitle = 'Dashboard';
+$pageTitle = 'Create Scheme';
 include './common/head.php';
 
 $topbarTitle = 'Create Scheme';
@@ -30,7 +32,7 @@ $breadcrumbs = [
             <?php include './common/topBar.php'; ?>
 
             <!-- Scrollable Content -->
-            <div class="content-scrollable card border-0">
+            <div class="content-scrollable card border-0 d-flex justify-content-between">
                 <div class="container">
                     <form id="schemeCreateForm" class="card p-4 shadow form-section mt-5">
                         <div class="mb-3">
@@ -81,6 +83,7 @@ $breadcrumbs = [
                         </div>
                     </form>
                 </div>
+                <?php include './footerTop.php'; ?>
             </div>
         </div>
     </div>

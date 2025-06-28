@@ -1,6 +1,7 @@
 <head>
     <meta charset="UTF-8">
-    <title><?= $pageTitle ?></title>
+    <link rel="shortcut icon" href="./assets//images/fav-icon.png" type="image/x-icon">
+    <title><?= $pageTitle ?> | Prayaan Jewel Mart</title>
     <link rel="stylesheet" href='./assets/css/lib/bootstrap.min.css'>
     <link rel="stylesheet" href='./assets/css/lib/toaster/iziToast.min.css'>
     <link rel="stylesheet" href='./assets/css/lib/datatable/dataTables.css'>

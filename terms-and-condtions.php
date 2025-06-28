@@ -2,9 +2,9 @@
 
 require './functions/middleware.php';
 require './config/db.php';
-
 $authData = auth_protect();
 $authUserId = $authData['id'];
+$isAdmin = ($authData['role_id'] == 1) ? true : false;
 
 $sql = "SELECT 
                 pr_schemes.id,
@@ -30,7 +30,7 @@ $schemeData = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <!DOCTYPE html>
 <html>
 <?php
-$pageTitle = 'Dashboard';
+$pageTitle = 'Terms and Conditions';
 include './common/head.php';
 $topbarTitle = 'About Us';
 $breadcrumbs = [

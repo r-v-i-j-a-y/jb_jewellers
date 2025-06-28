@@ -5,6 +5,7 @@ require './config/db.php';
 
 $authData = auth_protect();
 $authUserId = $authData['id'];
+$isAdmin = ($authData['role_id'] == 1) ? true : false;
 
 
 $sql = "
@@ -46,10 +47,9 @@ $userData = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <!DOCTYPE html>
 <html>
 <?php
-$pageTitle = 'Dashboard';
+$pageTitle = 'User List';
 include './common/head.php';
-$pageTitle = 'Users List';
-include './common/head.php';
+
 
 $topbarTitle = 'Users List';
 $breadcrumbs = [
@@ -70,7 +70,7 @@ $breadcrumbs = [
             <?php include './common/topBar.php'; ?>
 
             <!-- Scrollable Content -->
-            <div class="content-scrollable card border-0">
+            <div class="content-scrollable card border-0 d-flex justify-content-between">
 
                 <div class="container my-5 card p-4 shadow form-section">
                     <table id="userTable" datatable class="display table " style="width:100%">
@@ -101,6 +101,7 @@ $breadcrumbs = [
                         </tbody>
                     </table>
                 </div>
+                  <?php include './footerTop.php'; ?>
 
             </div>
         </div>

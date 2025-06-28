@@ -2,9 +2,9 @@
 
 require './functions/middleware.php';
 require './config/db.php';
-
 $authData = auth_protect();
 $authUserId = $authData['id'];
+$isAdmin = ($authData['role_id'] == 1) ? true : false;
 
 $chit_status = isset($_GET['chit_status']) ? $_GET['chit_status'] : null;
 
@@ -20,7 +20,6 @@ $sql = "SELECT
         uc.status,
         uc.enable,
         uc.created_at,
-        uc.created_at,
         uc.created_by,
         uc.updated_at,
         uc.remarks,
@@ -34,6 +33,7 @@ $sql = "SELECT
         LEFT JOIN pr_chits as ct ON ct.id = uc.scheme_amt_id
         LEFT JOIN pr_schemes as sm ON sm.id = uc.chit_scheme_id
         LEFT JOIN pr_users as ur ON ur.id = uc.userid
+        ORDER BY  uc.created_at DESC
     ";
 $params = null;
 if (!empty($chit_status)) {
@@ -50,7 +50,7 @@ $chitStatus = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <!DOCTYPE html>
 <html>
 <?php
-$pageTitle = 'Dashboard';
+$pageTitle = 'Change Status';
 include './common/head.php';
 $topbarTitle = 'Change Status';
 $breadcrumbs = [
@@ -93,13 +93,14 @@ $breadcrumbs = [
                 </div>
             </div>
             <!-- Scrollable Content -->
-            <div class="content-scrollable card border-0">
+            <div class="content-scrollable card border-0 d-flex justify-content-between">
 
                 <div class="container my-5  p-4  form-section ">
                     <table id="statusTable" datatable class="display table overflow-x-scroll " style="width:100%">
                         <thead>
                             <tr>
                                 <th>S.No</th>
+                                <th>Date</th>
                                 <th>User Name</th>
                                 <th>Mobile</th>
                                 <th>Email</th>
@@ -115,6 +116,7 @@ $breadcrumbs = [
                             <?php foreach ($chitStatus as $index => $chit): ?>
                                 <tr class="text-nowrap" ng-repeat="user in jb.allUserList track by $index">
                                     <td><?= $index + 1 ?></td>
+                                    <td class="text-capitalize"><?= $chit['created_at'] ?></td>
                                     <td class="text-capitalize"><?= $chit['user_name'] ?></td>
                                     <td class="text-capitalize"><?= $chit['mobile'] ?></td>
                                     <td class="text-capitalize"><?= $chit['email'] ?></td>
@@ -142,7 +144,7 @@ $breadcrumbs = [
                         </tbody>
                     </table>
                 </div>
-
+                                  <?php include './footerTop.php'; ?>
             </div>
         </div>
     </div>
