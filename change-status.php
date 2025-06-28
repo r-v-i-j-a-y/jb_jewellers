@@ -11,7 +11,7 @@ $chit_status = isset($_GET['chit_status']) ? $_GET['chit_status'] : null;
 
 $sql = "SELECT 
         uc.id,
-        uc.userid ,
+        uc.userid,
         uc.chit_scheme_id,
         uc.scheme_amt_id,
         uc.chit_scheme_number,
@@ -33,13 +33,14 @@ $sql = "SELECT
         LEFT JOIN pr_chits as ct ON ct.id = uc.scheme_amt_id
         LEFT JOIN pr_schemes as sm ON sm.id = uc.chit_scheme_id
         LEFT JOIN pr_users as ur ON ur.id = uc.userid
-        ORDER BY  uc.created_at DESC
+        
     ";
 $params = null;
 if (!empty($chit_status)) {
-    $sql .= "WHERE uc.status = :chit_status";
+    $sql .= " WHERE uc.status = :chit_status";
     $params['chit_status'] = $chit_status;
 }
+ $sql .= " ORDER BY  uc.created_at DESC";
 $pdo = db_connection();
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);

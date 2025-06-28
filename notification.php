@@ -8,19 +8,6 @@ $authUserId = $authData['id'];
 $isAdmin = ($authData['role_id'] == 1) ? true : false;
 
 $pdo = db_connection();
-
-$sql = "SELECT 
-        ntf.id,
-        ntf.user_id,
-        ntf.message,
-        ntf.notification_status,
-        ntf.created_at,
-        ntf.updated_at,
-        us.id as user_id,
-        us.role_id
-        FROM pr_notifications as ntf 
-        LEFT JOIN pr_users as us ON ntf.user_id = us.id";
-
 if ($isAdmin) {
     $sql .= " WHERE us.role_id = 1";
     $stmt = $pdo->prepare($sql);
@@ -48,6 +35,20 @@ if ($isAdmin) {
     $updateStmt = $pdo->prepare($updateSql);
     $updateStmt->execute(['user_id' => $authUserId]);
 }
+
+$sql = "SELECT 
+        ntf.id,
+        ntf.user_id,
+        ntf.message,
+        ntf.notification_status,
+        ntf.created_at,
+        ntf.updated_at,
+        us.id as user_id,
+        us.role_id
+        FROM pr_notifications as ntf 
+        LEFT JOIN pr_users as us ON ntf.user_id = us.id";
+
+
 
 $notificationData = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
